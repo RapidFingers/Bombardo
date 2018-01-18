@@ -12,7 +12,7 @@ import 'packet_ids.dart';
 /// Create room request
 class CreateRoomRequest extends AckRequest {
 
-  /// Player id UInt8
+  /// Player id UInt32
   int playerId;
 
   /// Create packet
