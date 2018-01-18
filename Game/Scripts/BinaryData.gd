@@ -82,6 +82,17 @@ func readUInt16():
 	var res = (_buffer[_pos] << 8) + _buffer[_pos + 1]
 	_pos += 2
 	return res
+
+func readUInt32():
+	"""
+	Read UInt32 from buffer
+	@return UInt32 or null
+	"""
+	if _pos + 3 >= _length:
+		return null
+	var res = (_buffer[_pos] << 24) + (_buffer[_pos + 1] << 16) + (_buffer[_pos + 2] << 8) + _buffer[_pos + 3]
+	_pos += 4
+	return res
 	
 func length():
 	"""
