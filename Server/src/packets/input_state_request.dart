@@ -1,7 +1,7 @@
 import '../game_server.dart';
 import '../client.dart';
+import '../utils/binary_data.dart';
 import 'core/ack_request.dart';
-import 'dart:typed_data';
 import 'input_state_response.dart';
 import 'packet_ids.dart';
 
@@ -21,10 +21,9 @@ class InputStateRequest extends AckRequest {
 
   /// Unpack
   @override
-  int unpack(ByteData data) {
-    var pos = super.unpack(data);
-    state = data.getUint8(pos);
-    return pos + 1;
+  void unpack(BinaryData data) {
+    super.unpack(data);
+    state = data.readUInt8();    
   }
 
   /// Process request

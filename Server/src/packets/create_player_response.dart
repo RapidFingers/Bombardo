@@ -3,7 +3,6 @@ import 'core/ack_response.dart';
 import 'packet_ids.dart';
 
 class CreatePlayerResponse extends AckResponse {
-
   /// Player already exists
   static const PLAYER_EXISTS = 3;
 
@@ -12,24 +11,31 @@ class CreatePlayerResponse extends AckResponse {
 
   /// Player id
   int playerId = 0;
+  
+  /// Constructor with code
+  CreatePlayerResponse.withCode(int sequence, int code, this.playerId)
+      : super(PacketIds.CREATE_PLAYER_RESPONSE) {
+    this.sequence = sequence;
+    this.code = code;
+  }
 
   /// Constructor
-  CreatePlayerResponse.ok([sequence, this.playerId]) : 
-    super(PacketIds.CREATE_PLAYER_RESPONSE, sequence, AckResponse.OK_RESPONSE);
+  CreatePlayerResponse.ok(int sequence, int playerId)
+      : this.withCode(sequence, AckResponse.OK_RESPONSE, playerId);
 
   /// Constructor
-  CreatePlayerResponse.playerExists([sequence]) : 
-    super(PacketIds.CREATE_PLAYER_RESPONSE, sequence, PLAYER_EXISTS);
+  CreatePlayerResponse.playerExists(int sequence, int playerId)
+      : this.withCode(sequence, PLAYER_EXISTS, playerId);
 
   /// Constructor
-  CreatePlayerResponse.playerBadName([sequence]) : 
-    super(PacketIds.CREATE_PLAYER_RESPONSE, sequence, PLAYER_BAD_NAME);
+  CreatePlayerResponse.playerBadName(int sequence, int playerId)
+      : this.withCode(sequence, PLAYER_BAD_NAME, playerId);
 
   /// Pack to data
   @override
   BinaryData pack() {
     var res = super.pack();
-  
+
     if (code == AckResponse.OK_RESPONSE) {
       res.addUInt32(playerId);
     }

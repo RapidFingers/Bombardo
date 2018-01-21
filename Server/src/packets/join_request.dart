@@ -1,6 +1,5 @@
+import '../utils/binary_data.dart';
 import 'core/base_packet.dart';
-import 'dart:typed_data';
-
 import '../game_server.dart';
 import 'core/ack_request.dart';
 import '../client.dart';
@@ -22,11 +21,10 @@ class JoinRequest extends AckRequest {
 
   /// Unpack
   @override
-  int unpack(ByteData data) {
-    var pos = super.unpack(data);
-    playerId = data.getUint32(pos);
-    roomId = data.getUint32(pos + 4);
-    return pos + 8;
+  void unpack(BinaryData data) {
+    super.unpack(data);
+    playerId = data.readUInt32();
+    roomId = data.readUInt32();
   }
 
   /// Constructor

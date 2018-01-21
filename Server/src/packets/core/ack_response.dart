@@ -13,7 +13,7 @@ abstract class AckResponse extends AckPacket {
   int code = OK_RESPONSE;
 
   /// Constructor
-  AckResponse(int packetId, [sequence, this.code]) : super(packetId, sequence);
+  AckResponse(int packetId) : super(packetId);
 
   /// Pack to data
   @override

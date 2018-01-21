@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:core';
 
+import '../client.dart';
 import 'player.dart';
 import 'room.dart';
 
@@ -15,7 +16,10 @@ class World {
   /// Room id counter
   int _roomId;
 
-  /// Rooms
+  /// Players. Key - player id
+  Map<int, Player> _players;
+
+  /// Rooms. Key - room id
   Map<int, Room> _rooms;
 
   /// Working timer
@@ -32,6 +36,7 @@ class World {
 
   /// Private constructor
   World._internal() {
+    _players = new Map<int, Player>();
     _rooms = new Map<int, Room>();
     _roomId = 1;
   }
@@ -41,9 +46,15 @@ class World {
     _timer = new Timer.periodic(new Duration(milliseconds: PERIOD.round()), timerWork);
   }
 
+  /// Login player
+  void loginPlayer(int playerId, Client client) {
+    /// TODO check player in database
+    _players[playerId] = new Player(playerId, client)
+  }
+
   /// Create new room
-  Room createRoom(Player owner) {
-    var room = new Room(_roomId, owner);
+  Room createRoom(String name, Player owner) {
+    var room = new Room(_roomId, name, owner);    
     _rooms[_roomId] = room;
     _roomId += 1;
     return room;
@@ -52,5 +63,10 @@ class World {
   /// Get room
   Room getRoom(int roomId) {
     return _rooms[roomId];
+  }
+
+  /// Get all available rooms
+  List<Room> getRoomList() {
+    return _rooms.values.toList();
   }
 }

@@ -6,16 +6,22 @@ class JoinResponse extends AckResponse {
   /// Room not found error
   static const ROOM_NOT_FOUND = 3;
 
-  /// Constructor
-  JoinResponse.ok([sequence])
-      : super(PacketIds.JOIN_ROOM_RESPONSE, sequence, AckResponse.OK_RESPONSE);
+  /// Constructor with code
+  JoinResponse.withCode(int sequence, int code)
+      : super(PacketIds.JOIN_ROOM_RESPONSE) {
+    this.sequence = sequence;
+    this.code = code;
+  }
 
   /// Constructor
-  JoinResponse.error([sequence])
-      : super(PacketIds.JOIN_ROOM_RESPONSE, sequence,
-            AckResponse.INTERNAL_ERROR_RESPONSE);
+  JoinResponse.ok(int sequence)
+      : this.withCode(sequence, AckResponse.OK_RESPONSE);
 
   /// Constructor
-  JoinResponse.roomNotFound([sequence])
-      : super(PacketIds.JOIN_ROOM_RESPONSE, sequence, ROOM_NOT_FOUND);
+  JoinResponse.error(int sequence)
+      : this.withCode(sequence, AckResponse.INTERNAL_ERROR_RESPONSE);
+
+  /// Constructor
+  JoinResponse.roomNotFound(int sequence)
+      : this.withCode(sequence, ROOM_NOT_FOUND);
 }

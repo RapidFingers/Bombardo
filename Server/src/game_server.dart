@@ -4,9 +4,11 @@ import 'dart:typed_data';
 
 import 'packets/core/base_packet.dart';
 import 'packets/create_room_request.dart';
+import 'packets/get_room_list_request.dart';
 import 'packets/join_request.dart';
 import 'packets/packet_ids.dart';
 import 'client.dart';
+import 'utils/binary_data.dart';
 
 /// Default port
 const int DEFAULT_PORT = 25101;
@@ -36,18 +38,18 @@ class GameServer {
     final client = new Client.fromDatagram(data, _socket);
 
     final bytesList = new Uint8List.fromList(data.data);
-    final bytes = bytesList.buffer.asByteData();
-    final protocolId = bytes.getUint8(0);
+    final binaryData = new BinaryData.fromUInt8List(bytesList);    
+    final protocolId = binaryData.readUInt8();
     if (protocolId != BasePacket.PROTOCOL_ID) return;
 
-    final packetId = bytes.getUint8(1);
+    final packetId = binaryData.readUInt8();
     final creator = _creators[packetId];
     if (creator == null) {
       return;
     }
 
-    final packet = creator();
-    packet.unpack(bytesList.buffer.asByteData(2));
+    final packet = creator();    
+    packet.unpack(binaryData);
     packet.process(client);
   }
 
@@ -56,6 +58,7 @@ class GameServer {
     _creators = new Map<int, Creator>();
     registerCreator(PacketIds.CREATE_ROOM_REQUEST, CreateRoomRequest.create);
     registerCreator(PacketIds.JOIN_ROOM_REQUEST, JoinRequest.create);
+    registerCreator(PacketIds.GET_ROOM_LIST_REQUEST, GetRoomListRequest.create);
   }
 
   /// Register packet creator
@@ -67,7 +70,9 @@ class GameServer {
   Future start() async {
     _socket =
         await RawDatagramSocket.bind(InternetAddress.ANY_IP_V4, DEFAULT_PORT);
+          
     _socket.listen(_processPacket);
+    print("Server started PORT: ${DEFAULT_PORT}");
   }
 
   /// Send data to client
@@ -77,6 +82,7 @@ class GameServer {
 
   /// Send data to client
   Future sendPacket(Client client, BasePacket packet) async {
-    _socket.send(packet.pack().toList(), client.address, DEFAULT_CLIENT_PORT);
+    final data = packet.pack().toList();
+    _socket.send(data, client.address, DEFAULT_CLIENT_PORT);
   }
 }

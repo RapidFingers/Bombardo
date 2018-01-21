@@ -5,6 +5,9 @@ var packetIds = preload("res://Scripts/Packets/PacketIds.gd")
 # Player Id
 var playerId = -1
 
+# Room name
+var roomName = ""
+
 func _init().(packetIds.CREATE_ROOM_REQUEST):
 	"""
 	Constructor
@@ -19,4 +22,5 @@ func pack():
 	"""
 	var res = .pack()
 	res.addUInt32(playerId)
+	res.addStringWithLength(roomName)
 	return res

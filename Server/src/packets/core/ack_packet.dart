@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import '../../utils/binary_data.dart';
 import 'base_packet.dart';
 
@@ -10,13 +8,12 @@ abstract class AckPacket extends BasePacket {
   int sequence = 0;
 
   /// Constructor
-  AckPacket(int packetId, [this.sequence]) : super(packetId);
+  AckPacket(int packetId) : super(packetId);
 
   /// Base unpack
   @override
-  int unpack(ByteData data) {
-    sequence = data.getUint32(0);
-    return 4;
+  void unpack(BinaryData data) {
+    sequence = data.readUInt32();
   }
 
   /// Pack to data

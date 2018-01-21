@@ -9,9 +9,16 @@ class CreateRoomResponse extends AckResponse {
   /// Room id UInt32
   int roomId;
 
+  /// Constructor with code
+  CreateRoomResponse.withCode(int sequence, int code, this.roomId)
+      : super(PacketIds.CREATE_ROOM_RESPONSE) {
+    this.sequence = sequence;
+    this.code = code;
+  }
+
   /// Constructor
-  CreateRoomResponse.ok([sequence, this.roomId]) : 
-    super(PacketIds.CREATE_ROOM_RESPONSE, sequence, AckResponse.OK_RESPONSE);
+  CreateRoomResponse.ok(int sequence, int roomId) : 
+    this.withCode(sequence, AckResponse.OK_RESPONSE, roomId);
 
   /// Pack to data
   @override

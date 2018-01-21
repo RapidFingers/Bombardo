@@ -8,7 +8,6 @@ var _buffer
 # Current pos
 var _pos = 0
 # Length of buffer
-var _length = 0
 
 static func fromByteArray(byteArray):
 	"""
@@ -19,6 +18,14 @@ static func fromByteArray(byteArray):
 	var res = new(byteArray)
 	return res
 
+func _incPos(inc):
+	"""
+	Inc position and length if needed
+	@param Int inc - increase value
+	@return void
+	"""
+	_pos += inc
+
 func _init(buffer = null):
 	"""
 	Constructor
@@ -27,7 +34,6 @@ func _init(buffer = null):
 		_buffer = PoolByteArray()
 	else:
 		_buffer = buffer
-		_length = buffer.size()
 	
 func setPos(pos):
 	"""
@@ -44,8 +50,7 @@ func addUInt8(data):
 	@return void
 	"""
 	_buffer.insert(_pos, data)
-	_pos += 1
-	_length += 1
+	_incPos(1)
 	
 func addUInt32(data):
 	"""
@@ -58,15 +63,47 @@ func addUInt32(data):
 	_buffer.insert(_pos + 2, (data >> 8) & 0xFF)	
 	_buffer.insert(_pos + 3, data & 0xFF)	
 	
-	_pos += 4
-	_length += 4
+	_incPos(4)
+
+func addArray(data):
+	"""
+	Add array
+	Unoptimize method by insert every byte
+	TODO: Find another way
+	@param PoolByteArray
+	@return void
+	"""
+	var ln = data.size()
+	for i in range(0, ln):
+		addUInt8(data[i])
+	
+	_incPos(ln)
+
+func addString(data):
+	"""
+	Add raw string
+	@param String data - some string
+	@return void
+	"""
+	var bytes = data.to_utf8()
+	addArray(bytes)
+
+func addStringWithLength(data):
+	"""
+	Add String with length to end
+	@param String data - some string
+	@return void
+	"""
+	var bytes = data.to_utf8()
+	addUInt8(bytes.size())
+	addArray(bytes)
 
 func readUInt8():
 	"""
 	Read UInt8 from buffer
 	@return UInt8 or null
 	"""
-	if _pos >= _length:
+	if _pos >= _buffer.size():
 		return null
 	var res = _buffer[_pos]
 	_pos += 1
@@ -77,7 +114,7 @@ func readUInt16():
 	Read UInt16 from buffer
 	@return UInt16 or null
 	"""
-	if _pos + 1 >= _length:
+	if _pos + 1 >= _buffer.size():
 		return null
 	var res = (_buffer[_pos] << 8) + _buffer[_pos + 1]
 	_pos += 2
@@ -88,7 +125,7 @@ func readUInt32():
 	Read UInt32 from buffer
 	@return UInt32 or null
 	"""
-	if _pos + 3 >= _length:
+	if _pos + 3 >= _buffer.size():
 		return null
 	var res = (_buffer[_pos] << 24) + (_buffer[_pos + 1] << 16) + (_buffer[_pos + 2] << 8) + _buffer[_pos + 3]
 	_pos += 4
@@ -99,7 +136,7 @@ func length():
 	Return length of BinaryData
 	@return Int
 	"""
-	return _length
+	return _buffer.size()
 	
 func toArray():
 	"""
@@ -114,7 +151,7 @@ func toHex():
 	@return String
 	"""
 	var res = PoolStringArray()
-	for i in range(0, _length):
+	for i in range(0, _buffer.size()):
 		var st = str(_buffer[i])
 		if len(st) < 2:
 			st = "0" + st

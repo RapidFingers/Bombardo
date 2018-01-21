@@ -1,7 +1,8 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:collection';
 
-class LimitedBufferIterator extends Iterator<int> {
+class LimitedBufferIterator extends Iterator<int> {  
   /// Some buffer
   Uint8List _buffer;
 
@@ -30,6 +31,9 @@ class BinaryData extends Object with IterableMixin {
   /// Increase part size
   static const PART_SIZE = 1000000;
 
+  /// Buffer increase ratio
+  static const INCREASE_VALUE = 2;
+
   /// Buffer
   Uint8List _buffer;
 
@@ -44,10 +48,14 @@ class BinaryData extends Object with IterableMixin {
 
   /// Prepare size
   void _prepareSize(int wantedSize) {
-    if (_buffer.length > _pos + wantedSize) return;
+    if (_buffer.length > _pos + wantedSize) 
+      return;
 
-    var len = _buffer.length + PART_SIZE;
-    if (len < _buffer.length + wantedSize) len = _buffer.length + wantedSize;
+    // Increase size by INCREASE_VALUE
+    var len = _buffer.length * INCREASE_VALUE;
+    if (len < _buffer.length + wantedSize) 
+      len = _buffer.length + wantedSize;
+
     var newBuff = new Uint8List(len);
     newBuff.setAll(0, _buffer);
     _buffer = newBuff;
@@ -57,15 +65,33 @@ class BinaryData extends Object with IterableMixin {
   /// Inc position and length
   void _incPos(int size) {
     _pos += size;
-    if (_pos > _length) _length += size;
+    if (_pos > _length)
+      _length += _pos - _length;
+  }
+
+  /// Read length from buffer
+  int _readLength() {
+    // TODO: read dynamic length
+    return readUInt8();
+  }
+
+  /// Init variables
+  void _init(Uint8List data) {
+    _buffer = data;
+    _bytes = _buffer.buffer.asByteData();
+    _length = _buffer.length;
+    _pos = 0;
   }
 
   /// Constructor
   BinaryData() {
-    _buffer = new Uint8List(PART_SIZE);
+    _init(new Uint8List(PART_SIZE));
     _length = 0;
-    _pos = 0;
-    _bytes = _buffer.buffer.asByteData();
+  }
+
+  /// Create BinaryData from UInt8List
+  BinaryData.fromUInt8List(Uint8List data) {
+    _init(data);
   }
 
   /// Return iterator
@@ -103,6 +129,25 @@ class BinaryData extends Object with IterableMixin {
     }
   }
 
+  /// Add length to buffer
+  void addLength(int value) {
+    addUInt8(value);
+  }
+
+  /// Add List<int>
+  void addList(List<int> value) {
+    _prepareSize(value.length);
+    _buffer.setAll(_pos, value);
+    _incPos(value.length);
+  }
+
+  /// Add string with length
+  void addStringWithLength(String value) {
+    final arr = UTF8.encode(value);
+    addLength(arr.length);
+    addList(arr);
+  }
+
   /// Add UInt8
   void addUInt8(int value) {
     _prepareSize(1);
@@ -122,5 +167,37 @@ class BinaryData extends Object with IterableMixin {
     _prepareSize(4);
     _bytes.setUint32(_pos, value);
     _incPos(4);
+  }
+
+  /// Read string with length
+  String readString(int len) {
+    return UTF8.decode(_bytes.buffer.asUint8List(_pos, len));
+  }
+
+  /// Read string with length
+  String readStringWithLength() {
+    final len = _readLength();
+    return readString(len);
+  }
+
+  /// Read UInt8 from buffer
+  int readUInt8() {
+    final res = _bytes.getUint8(_pos);
+    _pos += 1;
+    return res;
+  }
+
+  /// Read UInt16 from buffer
+  int readUInt16() {
+    final res = _bytes.getUint16(_pos);
+    _pos += 2;
+    return res;
+  }
+
+  /// Read UInt32 from buffer
+  int readUInt32() {
+    final res = _bytes.getUint32(_pos);
+    _pos += 4;
+    return res;
   }
 }

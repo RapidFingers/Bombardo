@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import '../../utils/binary_data.dart';
 import '../../client.dart';
 
@@ -10,18 +8,18 @@ abstract class BasePacket {
   static const int PROTOCOL_ID = 1;
 
   /// Packet id Uint8
-  int packetId;
+  final int packetId;
 
   /// Constructor
   BasePacket(this.packetId);
 
-  /// Virtual process for override
+  /// Process for override
+  /// Virtual
   void process(Client client) {}
 
   /// Unpack data
-  int unpack(ByteData data) {
-    return 0;
-  }
+  /// Virtual
+  void unpack(BinaryData data) {}
 
   /// Pack to data
   BinaryData pack() {
