@@ -6,7 +6,7 @@ import 'core/base_packet.dart';
 import 'get_room_list_response.dart';
 import 'packet_ids.dart';
 
-/// Create room request
+/// Get room list request
 class GetRoomListRequest extends AckRequest {
 
   /// Create packet
@@ -15,6 +15,7 @@ class GetRoomListRequest extends AckRequest {
   /// Constructor
   GetRoomListRequest() : super(PacketIds.GET_ROOM_LIST_REQUEST);
 
+  /// Process packet
   @override
   void process(Client client) {
     final rooms = World.instance.getRoomList();

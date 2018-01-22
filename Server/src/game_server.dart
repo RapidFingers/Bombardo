@@ -3,9 +3,8 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'packets/core/base_packet.dart';
-import 'packets/create_room_request.dart';
 import 'packets/get_room_list_request.dart';
-import 'packets/join_request.dart';
+import 'packets/join_room_request.dart';
 import 'packets/packet_ids.dart';
 import 'client.dart';
 import 'utils/binary_data.dart';
@@ -55,9 +54,8 @@ class GameServer {
 
   /// Constructor
   GameServer._internal() {
-    _creators = new Map<int, Creator>();
-    registerCreator(PacketIds.CREATE_ROOM_REQUEST, CreateRoomRequest.create);
-    registerCreator(PacketIds.JOIN_ROOM_REQUEST, JoinRequest.create);
+    _creators = new Map<int, Creator>();    
+    registerCreator(PacketIds.JOIN_ROOM_REQUEST, JoinRoomRequest.create);
     registerCreator(PacketIds.GET_ROOM_LIST_REQUEST, GetRoomListRequest.create);
   }
 

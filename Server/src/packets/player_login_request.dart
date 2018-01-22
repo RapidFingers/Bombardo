@@ -28,6 +28,6 @@ class PlayerLoginRequest extends AckRequest {
   @override
   void process(Client client) {
     World.instance.loginPlayer(playerId, client);
-    GameServer.instance.sendPacket(client, new PlayerLoginResponse.ok(sequence));
+    //GameServer.instance.sendPacket(client, new PlayerLoginResponse.ok(sequence));
   }
 }

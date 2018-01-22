@@ -3,7 +3,7 @@ import 'core/base_request.dart';
 import 'packet_ids.dart';
 
 /// Player position
-class PlayerPositionRequest extends BaseRequest {
+class PlayerPositionPush extends BaseRequest {
   /// X position of player, UInt32, scaler 0.01
   int posX;
 
@@ -11,8 +11,11 @@ class PlayerPositionRequest extends BaseRequest {
   int posY;
 
   /// Constructor
-  PlayerPositionRequest([this.posX, this.posY])
-      : super(PacketIds.PLAYER_POSITION_REQUEST);
+  PlayerPositionPush() : super(PacketIds.PLAYER_POSITION_PUSH);
+
+  /// Constructor with position initializer
+  PlayerPositionPush.withPosition(this.posX, this.posY)
+      : super(PacketIds.PLAYER_POSITION_PUSH);
 
   /// Pack to data
   @override

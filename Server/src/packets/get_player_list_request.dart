@@ -7,28 +7,30 @@ import '../client.dart';
 import 'core/ack_request.dart';
 import 'packet_ids.dart';
 
-/// Create player request
-class CreatePlayerRequest extends AckRequest {
-  /// Player name
-  String name;
+/// Get player list in room
+class GetPlayerListRequest extends AckRequest {
+  /// Id of player to get room
+  /// UInt32
+  int playerId;
 
   /// Create packet
-  static BasePacket create() => new CreatePlayerRequest();
-
+  static BasePacket create() => new GetPlayerListRequest();
+  
   /// Constructor
-  CreatePlayerRequest() : super(PacketIds.CREATE_PLAYER_REQUEST);
+  GetPlayerListRequest() : super(PacketIds.GET_PLAYER_LIST_REQUEST);     
 
   /// Unpack
   @override
   void unpack(BinaryData data) {
     super.unpack(data);
-    name = data.readStringWithLength();
+    playerId = data.readUInt32();
   }
 
   /// Process create player packet
   @override
   void process(Client client) {
-    final player = World.instance.createPlayer(client);
+    final player = World.instance.getPlayerById(playerId);
+    //player.currentRoom
 
     GameServer.instance
         .sendPacket(client, new CreatePlayerResponse.ok(sequence, player.id));

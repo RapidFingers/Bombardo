@@ -16,6 +16,9 @@ class World {
   /// Room id counter
   int _roomId;
 
+  /// Player id counter
+  int _playerId;
+
   /// Players. Key - player id
   Map<int, Player> _players;
 
@@ -39,6 +42,7 @@ class World {
     _players = new Map<int, Player>();
     _rooms = new Map<int, Room>();
     _roomId = 1;
+    _playerId = 1;
   }
 
   /// Start world timer
@@ -46,10 +50,24 @@ class World {
     _timer = new Timer.periodic(new Duration(milliseconds: PERIOD.round()), timerWork);
   }
 
+  /// Create new player
+  Player createPlayer(Client client) {
+    // TODO create player in database
+    final player = new Player(_playerId, client); 
+    _players[_playerId] = player;
+    _playerId += 1;
+    return player;
+  }
+
   /// Login player
   void loginPlayer(int playerId, Client client) {
-    /// TODO check player in database
-    _players[playerId] = new Player(playerId, client)
+    // TODO check player in database
+    _players[playerId] = new Player(playerId, client);
+  }
+
+  /// Get player by id
+  Player getPlayerById(int playerId) {
+    return _players[playerId];
   }
 
   /// Create new room
@@ -61,7 +79,7 @@ class World {
   }
 
   /// Get room
-  Room getRoom(int roomId) {
+  Room getRoomById(int roomId) {
     return _rooms[roomId];
   }
 
