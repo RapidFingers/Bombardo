@@ -5,20 +5,13 @@ import 'packet_ids.dart';
 
 /// Get room list response
 class GetRoomListResponse extends AckResponse {
-
   /// Rooms
   List<Room> rooms;
 
-  /// Constructor with code
-  GetRoomListResponse.withCode(int sequence, int code, this.rooms)
-      : super(PacketIds.GET_ROOM_LIST_RESPONSE) {
-    this.sequence = sequence;
-    this.code = code;
-  }
-
   /// Constructor
-  GetRoomListResponse.ok(int sequence, List<Room> rooms) : 
-    this.withCode(sequence, AckResponse.OK_RESPONSE, rooms);
+  GetRoomListResponse.ok(int sequence, this.rooms)
+      : super.withCode(PacketIds.GET_ROOM_LIST_RESPONSE, sequence,
+            AckResponse.OK_RESPONSE);
 
   /// Pack to data
   @override

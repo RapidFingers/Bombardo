@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../client.dart';
 import '../game_server.dart';
 import '../utils/binary_data.dart';
@@ -5,7 +7,7 @@ import '../world/world.dart';
 import 'core/ack_request.dart';
 import 'core/base_packet.dart';
 import 'packet_ids.dart';
-
+import 'player_login_response.dart';
 
 /// Create room request
 class PlayerLoginRequest extends AckRequest {
@@ -25,9 +27,11 @@ class PlayerLoginRequest extends AckRequest {
     playerId = data.readUInt32();
   }
 
+  /// Process request
   @override
-  void process(Client client) {
+  Future process(Client client) async {
     World.instance.loginPlayer(playerId, client);
-    //GameServer.instance.sendPacket(client, new PlayerLoginResponse.ok(sequence));
+    await GameServer.instance
+        .sendPacket(client, new PlayerLoginResponse.ok(sequence));
   }
 }

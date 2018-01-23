@@ -3,9 +3,11 @@ import 'room.dart';
 
 /// Player
 class Player {
-
   /// Player id
   final int id;
+
+  /// Player name
+  final String name;
 
   /// Client
   final Client client;
@@ -14,7 +16,7 @@ class Player {
   Room currentRoom;
 
   /// Constructor
-  Player(this.id, this.client);
+  Player(this.id, this.name, this.client);
 
   /// Get hash code
   @override
@@ -22,7 +24,7 @@ class Player {
 
   /// Equals
   @override
-  operator==(Object e) {
+  operator ==(Object e) {
     return e.hashCode == hashCode;
   }
 }

@@ -51,9 +51,9 @@ class World {
   }
 
   /// Create new player
-  Player createPlayer(Client client) {
+  Player createPlayer(String name, Client client) {
     // TODO create player in database
-    final player = new Player(_playerId, client); 
+    final player = new Player(_playerId, name, client); 
     _players[_playerId] = player;
     _playerId += 1;
     return player;
@@ -61,8 +61,8 @@ class World {
 
   /// Login player
   void loginPlayer(int playerId, Client client) {
-    // TODO check player in database
-    _players[playerId] = new Player(playerId, client);
+    // TODO get player from database
+    _players[playerId] = new Player(playerId, "Player ${playerId}", client);
   }
 
   /// Get player by id

@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import '../game_server.dart';
 import '../client.dart';
 import '../utils/binary_data.dart';
 import 'core/ack_request.dart';
+import 'core/base_packet.dart';
 import 'input_state_response.dart';
 import 'packet_ids.dart';
 
@@ -16,6 +19,9 @@ class InputStateRequest extends AckRequest {
   /// 4 - place bomb
   int state;
 
+  /// Create packet
+  static BasePacket create() => new InputStateRequest();
+
   /// Constructor
   InputStateRequest() : super(PacketIds.INPUT_STATE_REQUEST);
 
@@ -28,8 +34,8 @@ class InputStateRequest extends AckRequest {
 
   /// Process request
   @override
-  void process(Client client) {
-    GameServer.instance.sendPacket(client, new InputStateResponse.ok(sequence));
+  Future process(Client client) async {
+    await GameServer.instance.sendPacket(client, new InputStateResponse.ok(sequence));
 
     // TODO: set state to player
   }

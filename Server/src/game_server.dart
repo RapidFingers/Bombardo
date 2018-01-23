@@ -3,10 +3,13 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'packets/core/base_packet.dart';
+import 'packets/get_player_list_request.dart';
 import 'packets/get_room_list_request.dart';
+import 'packets/input_state_request.dart';
 import 'packets/join_room_request.dart';
 import 'packets/packet_ids.dart';
 import 'client.dart';
+import 'packets/ping_request.dart';
 import 'utils/binary_data.dart';
 
 /// Default port
@@ -49,14 +52,17 @@ class GameServer {
 
     final packet = creator();    
     packet.unpack(binaryData);
-    packet.process(client);
+    await packet.process(client);
   }
 
   /// Constructor
   GameServer._internal() {
-    _creators = new Map<int, Creator>();    
-    registerCreator(PacketIds.JOIN_ROOM_REQUEST, JoinRoomRequest.create);
+    _creators = new Map<int, Creator>();
+    registerCreator(PacketIds.PING_REQUEST, PingRequest.create);
     registerCreator(PacketIds.GET_ROOM_LIST_REQUEST, GetRoomListRequest.create);
+    registerCreator(PacketIds.JOIN_ROOM_REQUEST, JoinRoomRequest.create);
+    registerCreator(PacketIds.GET_PLAYER_LIST_REQUEST, GetPlayerListRequest.create);        
+    registerCreator(PacketIds.INPUT_STATE_REQUEST, InputStateRequest.create);
   }
 
   /// Register packet creator

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../game_server.dart';
 import '../utils/binary_data.dart';
 import '../world/world.dart';
@@ -27,10 +29,10 @@ class CreatePlayerRequest extends AckRequest {
 
   /// Process create player packet
   @override
-  void process(Client client) {
-    final player = World.instance.createPlayer(client);
+  Future process(Client client) async {
+    final player = World.instance.createPlayer(name, client);
 
-    GameServer.instance
+    await GameServer.instance
         .sendPacket(client, new CreatePlayerResponse.ok(sequence, player.id));
   }
 }

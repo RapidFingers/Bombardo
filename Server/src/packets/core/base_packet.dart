@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../../utils/binary_data.dart';
 import '../../client.dart';
 
@@ -11,11 +13,11 @@ abstract class BasePacket {
   final int packetId;
 
   /// Constructor
-  BasePacket(this.packetId);
+  BasePacket(this.packetId);  
 
   /// Process for override
   /// Virtual
-  void process(Client client) {}
+  Future process(Client client) async {}
 
   /// Unpack data
   /// Virtual
@@ -27,5 +29,5 @@ abstract class BasePacket {
     res.addUInt8(PROTOCOL_ID);
     res.addUInt8(packetId);
     return res;
-  }
+  }  
 }

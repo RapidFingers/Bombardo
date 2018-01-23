@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../client.dart';
 import '../game_server.dart';
 import '../world/world.dart';
@@ -8,7 +10,6 @@ import 'packet_ids.dart';
 
 /// Get room list request
 class GetRoomListRequest extends AckRequest {
-
   /// Create packet
   static BasePacket create() => new GetRoomListRequest();
 
@@ -17,8 +18,9 @@ class GetRoomListRequest extends AckRequest {
 
   /// Process packet
   @override
-  void process(Client client) {
+  Future process(Client client) async {
     final rooms = World.instance.getRoomList();
-    GameServer.instance.sendPacket(client, new GetRoomListResponse.ok(sequence, rooms));
+    await GameServer.instance
+        .sendPacket(client, new GetRoomListResponse.ok(sequence, rooms));
   }
 }
