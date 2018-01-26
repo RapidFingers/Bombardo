@@ -54,7 +54,7 @@ var _pingToServer = 0
 # On packet signal
 signal onPacket
 # On connection ready
-signal onConnected
+signal onConnect
 # On timeout
 signal onTimeout
 
@@ -65,7 +65,7 @@ func _registerPackets():
 	Fill packetCreators
 	@return void
 	"""
-	#_packetCreators[packetIds.CREATE_ROOM_RESPONSE] = load("res://Scripts/Packets/CreateRoomResponse.gd")
+	_packetCreators[packetIds.PING_RESPONSE] = load("res://Scripts/Packets/PingResponse.gd")
 	pass
 
 func _startListen():
@@ -127,10 +127,6 @@ func _getPacket(delta):
 			var data = binaryDataClass.fromByteArray(_socketUDP.get_packet())
 			var packet = _unpackPacket(data)
 			if packet != null:
-				if packet is pingResponseClass:
-					_processPing()
-					return
-					
 				if packet is ackPacketClass:
 					_ackPackets.erase(packet.sequence)
 				return packet
