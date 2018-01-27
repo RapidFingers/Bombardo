@@ -177,6 +177,8 @@ class BinaryData extends Object with IterableMixin {
   /// Read string with length
   String readStringWithLength() {
     final len = _readLength();
+    if (len < 1)
+      return null;
     return readString(len);
   }
 

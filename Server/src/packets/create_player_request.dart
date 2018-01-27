@@ -8,6 +8,7 @@ import 'create_player_response.dart';
 import '../client.dart';
 import 'core/ack_request.dart';
 import 'packet_ids.dart';
+import '../database/database.dart';
 
 /// Create player request
 class CreatePlayerRequest extends AckRequest {
@@ -30,9 +31,20 @@ class CreatePlayerRequest extends AckRequest {
   /// Process create player packet
   @override
   Future process(Client client) async {
-    final player = World.instance.createPlayer(name, client);
+    if (name == null) {
+      await GameServer.instance.sendPacket(
+          client, new CreatePlayerResponse().playerBadName(sequence));
+      return;
+    }
 
-    await GameServer.instance
+    try {
+      final player = await World.instance.createPlayer(name, client);
+      await GameServer.instance
         .sendPacket(client, new CreatePlayerResponse.ok(sequence, player.id));
+    }
+    on PlayerExistsException {
+      await GameServer.instance
+        .sendPacket(client, new CreatePlayerResponse().playerExists(sequence));
+    }    
   }
 }

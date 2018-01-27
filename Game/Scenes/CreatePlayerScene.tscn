@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://Scenes/CreatePlayerScene.gd" type="Script" id=1]
+[ext_resource path="res://Scenes/MessageDialog.tscn" type="PackedScene" id=2]
 
-[node name="CreatePlayerScene" type="Node2D"]
+[node name="CreatePlayerScene" type="Node" index="0"]
 
 script = ExtResource( 1 )
 
@@ -53,5 +54,11 @@ group = null
 text = "Create"
 flat = false
 align = 1
+
+[node name="MessageDialog" parent="." index="2" instance=ExtResource( 2 )]
+
+visible = false
+
+[connection signal="pressed" from="CreatePlayerButton" to="." method="_on_CreatePlayerButton_pressed"]
 
 

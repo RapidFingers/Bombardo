@@ -1,5 +1,6 @@
 extends "res://Scripts/Packets/BasePacket.gd"
 
+# Packet sequence
 var sequence = -1
 
 func _init(packetId).(packetId):

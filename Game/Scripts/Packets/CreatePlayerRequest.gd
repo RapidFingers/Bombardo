@@ -2,13 +2,10 @@ extends "res://Scripts/Packets/AckPacket.gd"
 
 var packetIds = preload("res://Scripts/Packets/PacketIds.gd")
 
-# Player Id
-var playerId = -1
+# Player name
+var name = ""
 
-# Room name
-var roomName = ""
-
-func _init().(packetIds.CREATE_ROOM_REQUEST):
+func _init().(packetIds.CREATE_PLAYER_REQUEST):
 	"""
 	Constructor
 	"""
@@ -21,6 +18,5 @@ func pack():
 	@return BinaryData
 	"""
 	var res = .pack()
-	res.addUInt32(playerId)
-	res.addStringWithLength(roomName)
+	res.addStringWithLength(name)
 	return res

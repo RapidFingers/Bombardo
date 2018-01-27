@@ -15,7 +15,7 @@ func _ready():
 	On node ready
 	@return void
 	"""
-	#_load()
+	_load()
 	pass
 	
 func _load():

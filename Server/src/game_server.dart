@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'packets/core/base_packet.dart';
+import 'packets/create_player_request.dart';
 import 'packets/get_player_list_request.dart';
 import 'packets/get_room_list_request.dart';
 import 'packets/input_state_request.dart';
@@ -50,6 +51,8 @@ class GameServer {
       return;
     }
 
+    print(binaryData.toHex());
+
     final packet = creator();    
     packet.unpack(binaryData);
     await packet.process(client);
@@ -59,6 +62,7 @@ class GameServer {
   GameServer._internal() {
     _creators = new Map<int, Creator>();
     registerCreator(PacketIds.PING_REQUEST, PingRequest.create);
+    registerCreator(PacketIds.CREATE_PLAYER_REQUEST, CreatePlayerRequest.create);
     registerCreator(PacketIds.GET_ROOM_LIST_REQUEST, GetRoomListRequest.create);
     registerCreator(PacketIds.JOIN_ROOM_REQUEST, JoinRoomRequest.create);
     registerCreator(PacketIds.GET_PLAYER_LIST_REQUEST, GetPlayerListRequest.create);        
@@ -86,7 +90,9 @@ class GameServer {
 
   /// Send data to client
   Future sendPacket(Client client, BasePacket packet) async {
-    final data = packet.pack().toList();
+    final binaryData = packet.pack();
+    print(binaryData.toHex());
+    final data = binaryData.toList();
     _socket.send(data, client.address, DEFAULT_CLIENT_PORT);
   }
 }

@@ -1,4 +1,3 @@
-import '../utils/binary_data.dart';
 import 'core/ack_response.dart';
 import 'packet_ids.dart';
 

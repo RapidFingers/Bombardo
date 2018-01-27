@@ -3,6 +3,7 @@ extends Node
 var binaryDataClass = preload("res://Scripts/BinaryData.gd")
 var basePacketClass = preload("res://Scripts/Packets/BasePacket.gd")
 var ackPacketClass = preload("res://Scripts/Packets/AckPacket.gd")
+var ackResponseClass = preload("res://Scripts/Packets/AckResponse.gd")
 var pingRequestClass = preload("res://Scripts/Packets/PingRequest.gd")
 var pingResponseClass = preload("res://Scripts/Packets/PingResponse.gd")
 var packetIds = preload("res://Scripts/Packets/PacketIds.gd")
@@ -39,6 +40,8 @@ var _socketUDP
 # Key - packet id
 var _packetCreators = {}
 
+# Sequence counter for ack packets
+var _sequence = 0
 # Packets for send with ack
 var _ackPackets = {}
 
@@ -53,8 +56,10 @@ var _pingToServer = 0
 
 # On packet signal
 signal onPacket
+# On packet error
+signal onError
 # On connection ready
-signal onConnect
+signal onConnected
 # On timeout
 signal onTimeout
 
@@ -66,6 +71,7 @@ func _registerPackets():
 	@return void
 	"""
 	_packetCreators[packetIds.PING_RESPONSE] = load("res://Scripts/Packets/PingResponse.gd")
+	_packetCreators[packetIds.CREATE_PLAYER_RESPONSE] = load("res://Scripts/Packets/CreatePlayerResponse.gd")
 	pass
 
 func _startListen():
@@ -101,6 +107,12 @@ func _process(delta):
 	elif _state == WORK_STATE:
 		_processWork(delta)
 
+func _nextSequence():
+	_sequence += 1;
+	if _sequence > 0xFFFFFF:
+		_sequence = 1
+	return _sequence
+
 func _processPing():
 	"""
 	Process ping packets
@@ -125,9 +137,10 @@ func _getPacket(delta):
 		if _socketUDP.get_available_packet_count() > 0:
 			# TODO: Concat packets
 			var data = binaryDataClass.fromByteArray(_socketUDP.get_packet())
+			print(data.toHex())
 			var packet = _unpackPacket(data)
 			if packet != null:
-				if packet is ackPacketClass:
+				if packet is ackResponseClass:
 					_ackPackets.erase(packet.sequence)
 				return packet
 					
@@ -186,12 +199,22 @@ func _processWork(delta):
 	@return void
 	"""
 
+	_resendPing(delta)
+
 	var packet = _getPacket(delta)
 	if packet == null:
 		return
 	
-	emit_signal("onPacket", packet)
+	if packet is ackResponseClass:
+		if packet.code != ackResponseClass.OK_RESPONSE:
+			emit_signal("onError", packet)
+			return
 	
+	if packet is pingResponseClass:
+		_processPing()
+		return
+	
+	emit_signal("onPacket", packet)
 	_resend(delta)
 
 func _pingServer():
@@ -225,8 +248,10 @@ func _sendAckPacket(packet):
 	@param AckPacket packet - packet to send
 	@return void
 	"""
+	packet.sequence = _nextSequence()
 	var data = packet.pack()
 	var arr = data.toArray()
+	print(data.toHex())
 	_ackPackets[packet.sequence] = arr
 	_socketUDP.put_packet(arr)
 
@@ -237,6 +262,7 @@ func _sendBasePacket(packet):
 	@return void
 	"""
 	var data = packet.pack()
+	print(data.toHex())
 	_socketUDP.put_packet(data.toArray())
 
 func connectServer():

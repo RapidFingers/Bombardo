@@ -7,7 +7,6 @@ import 'core/base_packet.dart';
 import 'create_player_response.dart';
 import '../client.dart';
 import 'core/ack_request.dart';
-import 'get_player_list_response.dart';
 import 'packet_ids.dart';
 
 /// Get player list in room

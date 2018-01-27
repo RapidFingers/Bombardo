@@ -1,1 +1,3 @@
 name: DartUdp
+dependencies:
+  mongo_dart: "^0.3.1"
