@@ -10,9 +10,6 @@ class Room extends IterableMixin<Player> {
   /// Room name
   final String name;
 
-  /// Owner of room
-  Player owner;
-
   /// Room is open for join
   bool isOpen;
 
@@ -20,7 +17,7 @@ class Room extends IterableMixin<Player> {
   final Set<Player> _players;
 
   /// Constructor
-  Room(this.id, this.name, this.owner) : _players = new Set<Player>() {
+  Room(this.id, this.name) : _players = new Set<Player>() {
     isOpen = true;
   }
 
@@ -34,10 +31,6 @@ class Room extends IterableMixin<Player> {
     _players.remove(player);
     if (_players.isEmpty) {
       return;
-    }
-
-    if (owner == player) {
-      owner = _players.first;
     }
   }
 

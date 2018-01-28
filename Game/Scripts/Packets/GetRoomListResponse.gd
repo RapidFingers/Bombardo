@@ -3,9 +3,9 @@ extends "res://Scripts/Packets/AckResponse.gd"
 var packetIds = preload("res://Scripts/Packets/PacketIds.gd")
 
 # Id of created player
-var playerId = -1
+var rooms = []
 
-func _init().(packetIds.CREATE_PLAYER_RESPONSE):
+func _init().(packetIds.GET_ROOM_LIST_RESPONSE):
 	"""
 	Constructor
 	"""
@@ -20,5 +20,10 @@ func unpack(data):
 	.unpack(data)
 	if code != OK_RESPONSE:
 		return
-		
-	playerId = data.readUInt32()
+	
+	while not data.isEnd():
+		rooms.append({
+			"id" : data.readUInt32(),
+			"name" : data.readStringWithLength(),
+			"imageUrl" : data.readStringWithLength()
+		})

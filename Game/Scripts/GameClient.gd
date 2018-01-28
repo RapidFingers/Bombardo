@@ -72,7 +72,8 @@ func _registerPackets():
 	"""
 	_packetCreators[packetIds.PING_RESPONSE] = load("res://Scripts/Packets/PingResponse.gd")
 	_packetCreators[packetIds.CREATE_PLAYER_RESPONSE] = load("res://Scripts/Packets/CreatePlayerResponse.gd")
-	pass
+	_packetCreators[packetIds.PLAYER_LOGIN_RESPONSE] = load("res://Scripts/Packets/LoginPlayerResponse.gd")
+	_packetCreators[packetIds.GET_ROOM_LIST_RESPONSE] = load("res://Scripts/Packets/GetRoomListResponse.gd")
 
 func _startListen():
 	"""
@@ -189,7 +190,7 @@ func _processConnect(delta):
 	
 	if packet is pingResponseClass:
 		_processPing()
-		emit_signal("onConnect")
+		emit_signal("onConnected")
 		_state = WORK_STATE
 
 func _processWork(delta):

@@ -98,6 +98,33 @@ func addStringWithLength(data):
 	addUInt8(bytes.size())
 	addArray(bytes)
 
+func readLength():
+	"""
+	Read length
+	@return Int
+	"""
+	return readUInt8()
+	
+func readString(cnt):
+	"""
+	Read utf8 string
+	@param Int cnt - count
+	@return String
+	"""
+	var arr = _buffer.subarray(_pos, _pos + cnt)
+	_pos += cnt
+	return arr.get_string_from_utf8()
+
+func readStringWithLength():
+	"""
+	Read string with length
+	@return String
+	"""
+	var ln = readLength()
+	if ln < 1:
+		return ""
+	return readString(ln)
+
 func readUInt8():
 	"""
 	Read UInt8 from buffer
@@ -130,14 +157,21 @@ func readUInt32():
 	var res = (_buffer[_pos] << 24) + (_buffer[_pos + 1] << 16) + (_buffer[_pos + 2] << 8) + _buffer[_pos + 3]
 	_pos += 4
 	return res
-	
+
 func length():
 	"""
 	Return length of BinaryData
 	@return Int
 	"""
 	return _buffer.size()
-	
+
+func isEnd():
+	"""
+	Return true if end of data
+	@return Bool
+	"""
+	return _pos >= length()
+
 func toArray():
 	"""
 	Return array

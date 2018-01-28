@@ -1,12 +1,12 @@
+import '../database/db_room_info.dart';
 import '../utils/binary_data.dart';
-import '../world/room.dart';
 import 'core/ack_response.dart';
 import 'packet_ids.dart';
 
 /// Get room list response
 class GetRoomListResponse extends AckResponse {
   /// Rooms
-  List<Room> rooms;
+  List<DbRoomInfo> rooms;
 
   /// Constructor
   GetRoomListResponse.ok(int sequence, this.rooms)
@@ -20,6 +20,7 @@ class GetRoomListResponse extends AckResponse {
     for (final room in rooms) {
       res.addUInt32(room.id);
       res.addStringWithLength(room.name);
+      res.addStringWithLength(room.imageUrl);
     }
     return res;
   }

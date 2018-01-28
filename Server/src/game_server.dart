@@ -11,6 +11,7 @@ import 'packets/join_room_request.dart';
 import 'packets/packet_ids.dart';
 import 'client.dart';
 import 'packets/ping_request.dart';
+import 'packets/player_login_request.dart';
 import 'utils/binary_data.dart';
 
 /// Default port
@@ -63,6 +64,7 @@ class GameServer {
     _creators = new Map<int, Creator>();
     registerCreator(PacketIds.PING_REQUEST, PingRequest.create);
     registerCreator(PacketIds.CREATE_PLAYER_REQUEST, CreatePlayerRequest.create);
+    registerCreator(PacketIds.PLAYER_LOGIN_REQUEST,  PlayerLoginRequest.create);
     registerCreator(PacketIds.GET_ROOM_LIST_REQUEST, GetRoomListRequest.create);
     registerCreator(PacketIds.JOIN_ROOM_REQUEST, JoinRoomRequest.create);
     registerCreator(PacketIds.GET_PLAYER_LIST_REQUEST, GetPlayerListRequest.create);        

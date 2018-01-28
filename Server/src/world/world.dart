@@ -16,7 +16,7 @@ class World {
   static final World instance = new World._internal();
 
   /// Room id counter
-  int _roomId;  
+  int _instanceId;
 
   /// Players. Key - player id
   Map<int, Player> _players;
@@ -30,9 +30,7 @@ class World {
   /// Work of timer
   Future timerWork(Timer timer) async {
     _rooms.forEach((k, room) {
-      room.forEach((player) {
-        
-      });
+      room.forEach((player) {});
     });
   }
 
@@ -40,17 +38,18 @@ class World {
   World._internal() {
     _players = new Map<int, Player>();
     _rooms = new Map<int, Room>();
-    _roomId = 1;    
+    _instanceId = 1;
   }
 
   /// Start world timer
   Future start() async {
-    _timer = new Timer.periodic(new Duration(milliseconds: PERIOD.round()), timerWork);
+    _timer = new Timer.periodic(
+        new Duration(milliseconds: PERIOD.round()), timerWork);
   }
 
   /// Create new player
   Future<Player> createPlayer(String name, Client client) async {
-    final dbPlayer = await Database.instance.createPlayer(name);    
+    final dbPlayer = await Database.instance.createPlayer(name);
 
     final player = new Player(dbPlayer.id, name, client);
     _players[dbPlayer.id] = player;
@@ -69,20 +68,15 @@ class World {
   }
 
   /// Create new room
-  Room createRoom(String name, Player owner) {
-    var room = new Room(_roomId, name, owner);    
-    _rooms[_roomId] = room;
-    _roomId += 1;
+  Room createRoom(String name) {
+    var room = new Room(_instanceId, name);
+    _rooms[_instanceId] = room;
+    _instanceId += 1;
     return room;
   }
 
   /// Get room
   Room getRoomById(int roomId) {
     return _rooms[roomId];
-  }
-
-  /// Get all available rooms
-  List<Room> getRoomList() {
-    return _rooms.values.toList();
   }
 }

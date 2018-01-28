@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://Scenes/CreatePlayerScene.gd" type="Script" id=1]
+[ext_resource path="res://Scripts/CreatePlayerScene.gd" type="Script" id=1]
 [ext_resource path="res://Scenes/MessageDialog.tscn" type="PackedScene" id=2]
 
-[node name="CreatePlayerScene" type="Node" index="0"]
+[node name="CreatePlayerScene" type="Node"]
 
 script = ExtResource( 1 )
 

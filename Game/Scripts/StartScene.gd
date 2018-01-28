@@ -1,23 +1,23 @@
 extends "res://Scripts/BaseScene.gd"
 
+var playerLoginRequestClass = load("res://Scripts/Packets/LoginPlayerRequest.gd")
+var playerLoginResponseClass = load("res://Scripts/Packets/LoginPlayerResponse.gd")
+
 func _ready():
 	"""
 	On node ready
 	@return void
 	"""
 
-	# Ping server
-	# Check player id
-	# Create player or Main Scene
 	gameClient.connect("onConnected", self, "_onConnected")
 	gameClient.connectServer()
 
 func _onConnected():
-	var playerId = settings.getValue(settings.PLAYER_ID)
+	var playerId = int(settings.getValue(settings.PLAYER_ID))
 	if playerId < 0:
 		get_tree().change_scene("res://Scenes/CreatePlayerScene.tscn")
 	else:
-		_loginPlayer()
+		_loginPlayer(playerId)
 
 func _exit_tree():
 	"""
@@ -32,11 +32,14 @@ func _onPacket(packet):
 	@return void
 	"""
 	if packet is playerLoginResponseClass:
-		pass
+		get_tree().change_scene("res://Scenes/ChooseRoomScene.tscn")
 
-func _loginPlayer():
+func _loginPlayer(playerId):
 	"""
 	Login player
+	@param Int playerId - player id
 	@return void
 	"""
-	pass
+	var packet = playerLoginRequestClass.new()
+	packet.playerId = playerId
+	gameClient.sendPacket(packet)
