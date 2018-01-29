@@ -8,6 +8,9 @@ class DbRoomInfo extends DbEntity {
   /// Room name
   String name;
 
+  /// Max player on map
+  int maxPlayer;
+
   /// Image url for loading
   String imageUrl;
 
@@ -15,7 +18,7 @@ class DbRoomInfo extends DbEntity {
   DbRoomInfo();
 
   /// Constructor with initialize
-  DbRoomInfo.withData(this.id, this.name, this.imageUrl);
+  DbRoomInfo.withData(this.id, this.name, this.maxPlayer, this.imageUrl);
 
   /// Convert entity to map
   @override
@@ -28,11 +31,6 @@ class DbRoomInfo extends DbEntity {
   /// Fill object from map
   @override
   Map<String, dynamic> toMap() {
-    return {
-      "_id" : id,
-      "name" : name,
-      "imageUrl" : imageUrl
-    };
+    return {"_id": id, "name": name, "imageUrl": imageUrl};
   }
-
 }

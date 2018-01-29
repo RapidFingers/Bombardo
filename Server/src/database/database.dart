@@ -27,14 +27,16 @@ class Database {
   /// Prepare data for use
   Future _prepareData() async {
     // Prepare room info collection
+
+    // TODO: Read that data from meta files
     var coll = _db.collection(ROOM_INFO_COLLECTION_NAME);
     final count = await coll.count();
     if (count < 1) {
       var roomInfos = [
-        new DbRoomInfo.withData(1, "The Gate", ""),
-        new DbRoomInfo.withData(2, "North Power", ""),
-        new DbRoomInfo.withData(3, "Lost Room", ""),
-        new DbRoomInfo.withData(4, "Darkest place", "")
+        new DbRoomInfo.withData(1, "The Gate", 12, ""),
+        new DbRoomInfo.withData(2, "North Power", 12, ""),
+        new DbRoomInfo.withData(3, "Lost Room", 12, ""),
+        new DbRoomInfo.withData(4, "Darkest place", 12, "")
       ];
 
       await coll
@@ -66,8 +68,25 @@ class Database {
     return player;
   }
 
+  /// Get player by id
+  Future<DbPlayer> getPlayerById(int playerId) async {
+    final coll = _db.collection(USER_COLLECTION_NAME);
+    final res = await coll.findOne({"_id": playerId});
+    if (res == null) return null;
+
+    return new DbPlayer()..fromMap(res);
+  }
+
+  /// Get room info by id
+  Future<DbRoomInfo> getRoomInfoById(int id) async {
+    final coll = _db.collection(ROOM_INFO_COLLECTION_NAME);
+    var res = await coll.findOne({"_id": id});
+    if (res == null) return null;
+    return new DbRoomInfo()..fromMap(res);
+  }
+
   /// Iterate room info
-  Stream<DbRoomInfo> getRoomInfo() async* {
+  Stream<DbRoomInfo> getAllRoomInfo() async* {
     final coll = _db.collection(ROOM_INFO_COLLECTION_NAME);
     await for (var r in coll.find()) {
       yield new DbRoomInfo()..fromMap(r);

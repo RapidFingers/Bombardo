@@ -19,7 +19,7 @@ class GetRoomListRequest extends AckRequest {
   /// Process packet
   @override
   Future process(Client client) async {
-    final rooms = await Database.instance.getRoomInfo().toList();
+    final rooms = await Database.instance.getAllRoomInfo().toList();
     await GameServer.instance
         .sendPacket(client, new GetRoomListResponse.ok(sequence, rooms));
   }

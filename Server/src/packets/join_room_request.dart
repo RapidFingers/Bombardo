@@ -14,8 +14,8 @@ class JoinRoomRequest extends AckRequest {
   /// Player id UInt32
   int playerId;
 
-  /// Id of room UInt32
-  int roomId;
+  /// Id of room info UInt32
+  int roomInfoId;
 
   /// Create packet
   static BasePacket create() => new JoinRoomRequest();
@@ -25,7 +25,7 @@ class JoinRoomRequest extends AckRequest {
   void unpack(BinaryData data) {
     super.unpack(data);
     playerId = data.readUInt32();
-    roomId = data.readUInt32();
+    roomInfoId = data.readUInt32();
   }
 
   /// Constructor
@@ -41,15 +41,12 @@ class JoinRoomRequest extends AckRequest {
       return;
     }
 
-    final room = World.instance.getRoomById(roomId);
+    final room = await World.instance.joinRoomById(roomInfoId, player);
+
     if (room == null) {
       await GameServer.instance
           .sendPacket(client, new JoinRoomResponse().roomNotFound(sequence));
       return;
     }
-
-    player.currentRoom = room;
-    await GameServer.instance
-        .sendPacket(client, new JoinRoomResponse.ok(sequence));
   }
 }
