@@ -42,7 +42,7 @@ class GameServer {
     final client = new Client.fromDatagram(data, _socket);
 
     final bytesList = new Uint8List.fromList(data.data);
-    final binaryData = new BinaryData.fromUInt8List(bytesList);    
+    final binaryData = new BinaryData.fromUInt8List(bytesList);
     final protocolId = binaryData.readUInt8();
     if (protocolId != BasePacket.PROTOCOL_ID) return;
 
@@ -54,20 +54,27 @@ class GameServer {
 
     print(binaryData.toHex());
 
-    final packet = creator();    
+    final packet = creator();
     packet.unpack(binaryData);
-    await packet.process(client);
+    try {
+      await packet.process(client);
+    } catch (e) {
+      // TODO: global common exceptions process
+      print(e);
+    }
   }
 
   /// Constructor
   GameServer._internal() {
     _creators = new Map<int, Creator>();
     registerCreator(PacketIds.PING_REQUEST, PingRequest.create);
-    registerCreator(PacketIds.CREATE_PLAYER_REQUEST, CreatePlayerRequest.create);
-    registerCreator(PacketIds.PLAYER_LOGIN_REQUEST,  PlayerLoginRequest.create);
+    registerCreator(
+        PacketIds.CREATE_PLAYER_REQUEST, CreatePlayerRequest.create);
+    registerCreator(PacketIds.PLAYER_LOGIN_REQUEST, PlayerLoginRequest.create);
     registerCreator(PacketIds.GET_ROOM_LIST_REQUEST, GetRoomListRequest.create);
     registerCreator(PacketIds.JOIN_ROOM_REQUEST, JoinRoomRequest.create);
-    registerCreator(PacketIds.GET_PLAYER_LIST_REQUEST, GetPlayerListRequest.create);        
+    registerCreator(
+        PacketIds.GET_PLAYER_LIST_REQUEST, GetPlayerListRequest.create);
     registerCreator(PacketIds.INPUT_STATE_REQUEST, InputStateRequest.create);
   }
 
@@ -80,7 +87,7 @@ class GameServer {
   Future start() async {
     _socket =
         await RawDatagramSocket.bind(InternetAddress.ANY_IP_V4, DEFAULT_PORT);
-          
+
     _socket.listen(_processPacket);
     print("Server started PORT: ${DEFAULT_PORT}");
   }

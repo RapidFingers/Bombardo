@@ -9,5 +9,5 @@ class JoinRoomResponse extends AckResponse {
   /// Constructor
   JoinRoomResponse.ok(int sequence)
       : super.withCode(
-            PacketIds.JOIN_ROOM_RESPONSE, sequence, AckResponse.OK_RESPONSE);  
+            PacketIds.JOIN_ROOM_RESPONSE, sequence, AckResponse.OK_RESPONSE);
 }

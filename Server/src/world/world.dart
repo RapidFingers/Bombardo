@@ -3,10 +3,13 @@ import 'dart:core';
 
 import '../client.dart';
 import '../database/database.dart';
-import '../database/db_player.dart';
-import '../database/db_room_info.dart';
+import '../game_server.dart';
+import '../utils/exceptions.dart';
+import 'game_room.dart';
+import 'map_info.dart';
 import 'player.dart';
-import 'room.dart';
+import 'wait_room.dart';
+import '../packets/join_room_response.dart';
 
 /// Phisics world with rooms and players
 class World {
@@ -17,13 +20,13 @@ class World {
   static final World instance = new World._internal();
 
   /// Room id counter
-  int _instanceId;
+  int _roomId;
 
   /// Players. Key - player id
   Map<int, Player> _players;
 
-  /// Room instances. Key - room info id
-  Map<int, List<Room>> _roomInstances;
+  /// Wait rooms. Key - map info id
+  Map<int, List<WaitRoom>> _waitRooms;
 
   /// Working timer
   Timer _timer;
@@ -35,59 +38,73 @@ class World {
     });*/
   }
 
+  /// Create new game room
+  GameRoom _createNewRoom() {
+
+  }
+
+  /// On room create
+  Future _onRoomCreate(WaitRoom waitRoom) async {
+    for (final player in waitRoom) {
+     
+    }
+    print("Room create ${waitRoom.mapInfo.name}");
+  }
+
   /// Private constructor
   World._internal() {
     _players = new Map<int, Player>();
-    _roomInstances = new Map<int, List<Room>>();
-    _instanceId = 1;
+    _waitRooms = new Map<int, List<WaitRoom>>();
+    _roomId = 1;
   }
 
   /// Start world timer
   Future start() async {
     // _timer = new Timer.periodic(
-    //     new Duration(milliseconds: PERIOD.round()), timerWork);
+    //     new Duration(milliseconds: PERIOD.round()), timerWork);    
   }
 
   /// Create new player
   Future<Player> createPlayer(String name, Client client) async {
     final dbPlayer = await Database.instance.createPlayer(name);
-
     final player = new Player(dbPlayer.id, name, client);
     _players[dbPlayer.id] = player;
     return player;
   }
 
   /// Login player
-  Future loginPlayer(int playerId, Client client) async {
+  Future loginPlayerById(int playerId, Client client) async {
     final dbPlayer = await Database.instance.getPlayerById(playerId);
     _players[playerId] = new Player(dbPlayer.id, dbPlayer.name, client);
   }
 
   /// Get player by id
   Player getPlayerById(int playerId) {
-    return _players[playerId];
+    final player = _players[playerId];
+    if (player == null) throw new PlayerNotExistsException();
+    return player;
   }
 
   /// Join to room by id
-  Future<Room> joinRoomById(int roomInfoId, Player player) async {
-    final roomInfo = await Database.instance.getRoomInfoById(roomInfoId);
+  Future<WaitRoom> joinRoomById(int roomInfoId, Player player) async {
+    final mapInfoDb = await Database.instance.getMapInfoById(roomInfoId);
+    final mapInfo = new MapInfo.fromDbMapInfo(mapInfoDb);
 
-    var rooms = _roomInstances[roomInfo.id];
-    Room room;
+    var rooms = _waitRooms[mapInfo.id];
+    WaitRoom room;
     if (rooms == null) {
-      rooms = new List<Room>();
-      _roomInstances[roomInfo.id] = rooms;
+      rooms = new List<WaitRoom>();
+      _waitRooms[mapInfo.id] = rooms;
     }
 
-    room = rooms.firstWhere((x) => x.roomInfo.maxPlayer < x.playerCount);
+    room = rooms.firstWhere((x) => x.canJoin, orElse: () => null);
     if (room == null) {
-      room = new Room(_instanceId, roomInfo);
+      room = new WaitRoom(mapInfo, new Duration(minutes: 1), _onRoomCreate);
       rooms.add(room);
-      _instanceId += 1;
     }
 
     room.addPlayer(player);
-    player.currentRoom = room;
+    player.waitRoom = room;
     return room;
   }
 }

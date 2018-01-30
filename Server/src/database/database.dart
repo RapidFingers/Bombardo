@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'package:mongo_dart/mongo_dart.dart';
 
+import '../utils/exceptions.dart';
 import 'db_player.dart';
-import 'db_room_info.dart';
-
-/// Throws when player already exists
-class PlayerExistsException implements Exception {}
+import 'db_map_info.dart';
 
 /// For working with database
 class Database {
@@ -16,7 +14,7 @@ class Database {
   static const USER_COLLECTION_NAME = "player";
 
   /// Name for room info collection
-  static const ROOM_INFO_COLLECTION_NAME = "room_info";
+  static const MAP_INFO_COLLECTION_NAME = "map_info";
 
   /// Instance
   static final Database instance = new Database._internal();
@@ -29,14 +27,14 @@ class Database {
     // Prepare room info collection
 
     // TODO: Read that data from meta files
-    var coll = _db.collection(ROOM_INFO_COLLECTION_NAME);
+    var coll = _db.collection(MAP_INFO_COLLECTION_NAME);
     final count = await coll.count();
     if (count < 1) {
       var roomInfos = [
-        new DbRoomInfo.withData(1, "The Gate", 12, ""),
-        new DbRoomInfo.withData(2, "North Power", 12, ""),
-        new DbRoomInfo.withData(3, "Lost Room", 12, ""),
-        new DbRoomInfo.withData(4, "Darkest place", 12, "")
+        new DbMapInfo.withData(1, "The Gate", 12, ""),
+        new DbMapInfo.withData(2, "North Power", 12, ""),
+        new DbMapInfo.withData(3, "Lost Room", 12, ""),
+        new DbMapInfo.withData(4, "Darkest place", 12, "")
       ];
 
       await coll
@@ -60,7 +58,7 @@ class Database {
   Future<DbPlayer> createPlayer(String name) async {
     final coll = _db.collection(USER_COLLECTION_NAME);
     final res = await coll.findOne({"name": name});
-    if (res != null) throw new PlayerExistsException();
+    if (res != null) throw new PlayerAlreadyExistsException();
 
     final id = await coll.count() + 1;
     var player = new DbPlayer(id, name);
@@ -72,24 +70,24 @@ class Database {
   Future<DbPlayer> getPlayerById(int playerId) async {
     final coll = _db.collection(USER_COLLECTION_NAME);
     final res = await coll.findOne({"_id": playerId});
-    if (res == null) return null;
+    if (res == null) return throw new PlayerNotExistsException();
 
     return new DbPlayer()..fromMap(res);
   }
 
   /// Get room info by id
-  Future<DbRoomInfo> getRoomInfoById(int id) async {
-    final coll = _db.collection(ROOM_INFO_COLLECTION_NAME);
+  Future<DbMapInfo> getMapInfoById(int id) async {
+    final coll = _db.collection(MAP_INFO_COLLECTION_NAME);
     var res = await coll.findOne({"_id": id});
-    if (res == null) return null;
-    return new DbRoomInfo()..fromMap(res);
+    if (res == null) throw new MapInfoNotExistsException();
+    return new DbMapInfo()..fromMap(res);
   }
 
   /// Iterate room info
-  Stream<DbRoomInfo> getAllRoomInfo() async* {
-    final coll = _db.collection(ROOM_INFO_COLLECTION_NAME);
+  Stream<DbMapInfo> getAllRoomInfo() async* {
+    final coll = _db.collection(MAP_INFO_COLLECTION_NAME);
     await for (var r in coll.find()) {
-      yield new DbRoomInfo()..fromMap(r);
+      yield new DbMapInfo()..fromMap(r);
     }
   }
 }

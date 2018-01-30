@@ -8,7 +8,7 @@ import 'create_player_response.dart';
 import '../client.dart';
 import 'core/ack_request.dart';
 import 'packet_ids.dart';
-import '../database/database.dart';
+import '../utils/exceptions.dart';
 
 /// Create player request
 class CreatePlayerRequest extends AckRequest {
@@ -42,7 +42,7 @@ class CreatePlayerRequest extends AckRequest {
       await GameServer.instance
         .sendPacket(client, new CreatePlayerResponse.ok(sequence, player.id));
     }
-    on PlayerExistsException {
+    on PlayerAlreadyExistsException {
       await GameServer.instance
         .sendPacket(client, new CreatePlayerResponse().playerExists(sequence));
     }    

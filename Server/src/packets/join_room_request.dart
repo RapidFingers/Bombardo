@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import '../game_server.dart';
 import '../utils/binary_data.dart';
 import 'core/base_packet.dart';
-import '../game_server.dart';
 import 'core/ack_request.dart';
 import '../client.dart';
 import '../world/world.dart';
@@ -15,7 +15,7 @@ class JoinRoomRequest extends AckRequest {
   int playerId;
 
   /// Id of room info UInt32
-  int roomInfoId;
+  int mapInfoId;
 
   /// Create packet
   static BasePacket create() => new JoinRoomRequest();
@@ -24,8 +24,8 @@ class JoinRoomRequest extends AckRequest {
   @override
   void unpack(BinaryData data) {
     super.unpack(data);
+    mapInfoId = data.readUInt32();
     playerId = data.readUInt32();
-    roomInfoId = data.readUInt32();
   }
 
   /// Constructor
@@ -34,19 +34,9 @@ class JoinRoomRequest extends AckRequest {
   /// Process packet
   @override
   Future process(Client client) async {
-    final player = World.instance.getPlayerById(playerId);
-    if (player == null) {
+      final player = World.instance.getPlayerById(playerId);
+      await World.instance.joinRoomById(mapInfoId, player);
       await GameServer.instance
-          .sendPacket(client, new JoinRoomResponse().playerNotFound(sequence));
-      return;
-    }
-
-    final room = await World.instance.joinRoomById(roomInfoId, player);
-
-    if (room == null) {
-      await GameServer.instance
-          .sendPacket(client, new JoinRoomResponse().roomNotFound(sequence));
-      return;
-    }
+          .sendPacket(player.client, new JoinRoomResponse.ok(sequence));
   }
 }

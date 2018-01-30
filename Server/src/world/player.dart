@@ -1,5 +1,6 @@
 import '../client.dart';
-import 'room.dart';
+import 'game_room.dart';
+import 'wait_room.dart';
 
 /// Player
 class Player {
@@ -12,8 +13,11 @@ class Player {
   /// Client
   final Client client;
 
+  /// Room where player waits for game
+  WaitRoom waitRoom;
+
   /// Room where player playes
-  Room currentRoom;
+  GameRoom currentRoom;
 
   /// Constructor
   Player(this.id, this.name, this.client);

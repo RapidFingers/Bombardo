@@ -2,10 +2,10 @@ extends "res://Scripts/Packets/AckResponse.gd"
 
 var packetIds = preload("res://Scripts/Packets/PacketIds.gd")
 
-# Id of created player
-var maps = []
+# Id of room instance
+var roomId
 
-func _init().(packetIds.GET_ROOM_LIST_RESPONSE):
+func _init().(packetIds.JOIN_ROOM_RESPONSE):
 	"""
 	Constructor
 	"""
@@ -21,9 +21,4 @@ func unpack(data):
 	if code != OK_RESPONSE:
 		return
 	
-	while not data.isEnd():
-		maps.append({
-			"id" : data.readUInt32(),
-			"name" : data.readStringWithLength(),
-			"imageUrl" : data.readStringWithLength()
-		})
+	roomId = data.readUInt8()

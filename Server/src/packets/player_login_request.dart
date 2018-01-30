@@ -30,8 +30,13 @@ class PlayerLoginRequest extends AckRequest {
   /// Process request
   @override
   Future process(Client client) async {
-    World.instance.loginPlayer(playerId, client);
-    await GameServer.instance
-        .sendPacket(client, new PlayerLoginResponse.ok(sequence));
+    try {
+      World.instance.loginPlayerById(playerId, client);
+      await GameServer.instance
+          .sendPacket(client, new PlayerLoginResponse.ok(sequence));
+    } catch (e) {
+      await GameServer.instance.sendPacket(
+          client, new PlayerLoginResponse()..playerNotFound(sequence));
+    }
   }
 }

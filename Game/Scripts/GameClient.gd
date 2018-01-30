@@ -74,6 +74,7 @@ func _registerPackets():
 	_packetCreators[packetIds.CREATE_PLAYER_RESPONSE] = load("res://Scripts/Packets/CreatePlayerResponse.gd")
 	_packetCreators[packetIds.PLAYER_LOGIN_RESPONSE] = load("res://Scripts/Packets/LoginPlayerResponse.gd")
 	_packetCreators[packetIds.GET_ROOM_LIST_RESPONSE] = load("res://Scripts/Packets/GetRoomListResponse.gd")
+	_packetCreators[packetIds.JOIN_ROOM_RESPONSE] = load("res://Scripts/Packets/JoinRoomResponse.gd")
 
 func _startListen():
 	"""

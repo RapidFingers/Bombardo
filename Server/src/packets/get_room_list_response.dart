@@ -1,4 +1,4 @@
-import '../database/db_room_info.dart';
+import '../database/db_map_info.dart';
 import '../utils/binary_data.dart';
 import 'core/ack_response.dart';
 import 'packet_ids.dart';
@@ -6,7 +6,7 @@ import 'packet_ids.dart';
 /// Get room list response
 class GetRoomListResponse extends AckResponse {
   /// Rooms
-  List<DbRoomInfo> rooms;
+  List<DbMapInfo> rooms;
 
   /// Constructor
   GetRoomListResponse.ok(int sequence, this.rooms)
