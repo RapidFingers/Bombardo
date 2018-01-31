@@ -1,12 +1,12 @@
 import 'dart:collection';
 
-import '../database/db_map_info.dart';
+import 'map_info.dart';
 import 'player.dart';
 
 /// Room where players plays
 class GameRoom extends IterableMixin<Player> {
   /// Room info
-  final DbMapInfo roomInfo;
+  final MapInfo mapInfo;
 
   /// Room id
   final int id;
@@ -18,7 +18,7 @@ class GameRoom extends IterableMixin<Player> {
   int get playerCount => _players.length;
 
   /// Constructor
-  GameRoom(this.id, this.roomInfo) : _players = new Set<Player>();
+  GameRoom(this.id, this.mapInfo) : _players = new Set<Player>();
 
   /// Add player to room
   void addPlayer(Player player) {

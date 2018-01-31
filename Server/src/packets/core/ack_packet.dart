@@ -5,7 +5,7 @@ import 'base_packet.dart';
 abstract class AckPacket extends BasePacket {
 
   /// Packet number Uint32
-  int sequence = 0;
+  int sequence = -1;
 
   /// Constructor
   AckPacket(int packetId) : super(packetId);

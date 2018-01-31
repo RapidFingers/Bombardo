@@ -1,6 +1,7 @@
 extends "res://Scripts/BaseScene.gd"
 
-var joinRoomResponseClass = preload("res://Scripts/Packets/JoinRoomResponse.gd")
+var gameStartRequestClass = preload("res://Scripts/Packets/StartGameRequest.gd")
+var gameStartResponseClass = preload("res://Scripts/Packets/StartGameResponse.gd")
 
 func _ready():
 	"""
@@ -15,7 +16,10 @@ func _onPacket(packet):
 	@param BasePacket packet - BasePacket
 	@return void
 	"""
-	pass
+	if packet is gameStartRequestClass:
+		var req = gameStartResponseClass.new()
+		gameClient.sendPacket(req)
+		get_tree().change_scene("res://Scenes/GameScene.tscn")
 	
 func _onError(packet):
 	"""

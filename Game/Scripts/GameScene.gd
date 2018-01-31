@@ -1,5 +1,7 @@
 extends "res://Scripts/BaseScene.gd"
 
+var playerPositionPushClass = preload("res://Scripts/Packets/PlayerPositionPush.gd")
+
 func _ready():
 	"""
 	On node ready
@@ -13,7 +15,8 @@ func _onPacket(packet):
 	@param BasePacket packet - BasePacket
 	@return void
 	"""
-	pass
+	if packet is playerPositionPushClass:
+		pass
 	
 func _onError(packet):
 	"""

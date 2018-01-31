@@ -9,18 +9,28 @@ const PLAYER_EXISTS = 3;
 # Player bad name
 const PLAYER_BAD_NAME = 4;
 # Room not found error
-const ROOM_NOT_FOUND = 4;
+const ROOM_NOT_FOUND = 5;
 # Player not found error
-const PLAYER_NOT_FOUND = 5;
+const PLAYER_NOT_FOUND = 6;
 
 # Response code
-var code = -1
+var code = OK_RESPONSE
 
 func _init(packetId).(packetId):
 	"""
 	Constructor
 	"""
 	pass
+	
+func pack():
+	"""
+	Pack packet to bytes
+	For override
+	@return BinaryData
+	"""
+	var res = .pack()
+	res.addUInt8(code)
+	return res
 	
 func unpack(data):
 	"""

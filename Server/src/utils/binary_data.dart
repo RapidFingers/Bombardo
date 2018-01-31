@@ -89,6 +89,12 @@ class BinaryData extends Object with IterableMixin {
     _length = 0;
   }
 
+  /// Clear position and length
+  void clear() {
+    _pos = 0;
+    _length = 0;
+  }
+
   /// Create BinaryData from UInt8List
   BinaryData.fromUInt8List(Uint8List data) {
     _init(data);

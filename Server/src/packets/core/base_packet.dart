@@ -12,8 +12,11 @@ abstract class BasePacket {
   /// Packet id Uint8
   final int packetId;
 
+  /// Binary data of packet
+  final BinaryData _data;
+
   /// Constructor
-  BasePacket(this.packetId);  
+  BasePacket(this.packetId) : _data = new BinaryData();
 
   /// Process for override
   /// Virtual
@@ -25,9 +28,9 @@ abstract class BasePacket {
 
   /// Pack to data
   BinaryData pack() {
-    var res = new BinaryData();
-    res.addUInt8(PROTOCOL_ID);
-    res.addUInt8(packetId);
-    return res;
+    _data.clear();
+    _data.addUInt8(PROTOCOL_ID);
+    _data.addUInt8(packetId);
+    return _data;
   }  
 }

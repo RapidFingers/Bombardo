@@ -21,7 +21,6 @@ func _onPacket(packet):
 	"""
 	if packet is createPlayerResponseClass:
 		settings.setValue(settings.PLAYER_ID, packet.playerId)
-		print(packet.playerId)
 	
 func _onError(packet):
 	"""
