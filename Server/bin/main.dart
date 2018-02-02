@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import '../src/database/database.dart';
+import '../src/logger.dart';
 import '../src/world/world.dart';
 import '../src/game_server.dart';
 
@@ -11,6 +12,6 @@ main(List<String> args) async {
     await World.instance.start();
     await GameServer.instance.start();
   }, onError: (e) {
-    print(e);
+    log(e);
   });
 }

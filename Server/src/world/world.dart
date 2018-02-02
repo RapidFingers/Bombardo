@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:core';
 
+import 'package:vector_math/vector_math.dart';
+
 import '../client.dart';
 import '../database/database.dart';
 import '../game_server.dart';
+import '../logger.dart';
 import '../packets/player_position_push.dart';
 import '../packets/start_game_request.dart';
 import '../utils/exceptions.dart';
@@ -14,8 +17,11 @@ import 'wait_room.dart';
 
 /// Phisics world with rooms and players
 class World {
-  /// Period of timer
-  static const double PERIOD = 1000 / 30;
+  /// Period of timer in milliseconds
+  static const double PERIOD = 1000 / 15;
+
+  /// Wait for room in seconds
+  static const int WAIT_IN_SECONDS = 5;
 
   /// Instance
   static final World instance = new World._internal();
@@ -39,7 +45,10 @@ class World {
   Future timerWork(Timer timer) async {
     _gameRooms.forEach((k, room) {
       room.forEach((player) {
-        final packet = PlayerPositionPush.recycle(player.id, 3, 3);
+        player.move();
+        final pos = player.getRescaledPos();
+        final packet =
+            PlayerPositionPush.recycle(player.id, pos.x.round(), pos.y.round());
         GameServer.instance.sendPacket(player.client, packet);
       });
     });
@@ -56,12 +65,14 @@ class World {
   /// On room create
   Future _onRoomCreate(WaitRoom waitRoom) async {
     for (final player in waitRoom) {
+      player.direction = new Vector2(0.02, 0.0);
+
       final room = _createNewRoom(waitRoom);
       room.addPlayer(player);
       final packet = new StartGameRequest()..roomId = room.id;
       GameServer.instance.sendPacket(player.client, packet);
     }
-    print("Room create ${waitRoom.mapInfo.name}");
+    log("Room create ${waitRoom.mapInfo.name}");
   }
 
   /// Private constructor
@@ -75,7 +86,7 @@ class World {
   /// Start world timer
   Future start() async {
     _timer = new Timer.periodic(
-         new Duration(milliseconds: PERIOD.round()), timerWork);
+        new Duration(milliseconds: PERIOD.round()), timerWork);
   }
 
   /// Create new player
@@ -113,7 +124,8 @@ class World {
 
     room = rooms.firstWhere((x) => x.canJoin, orElse: () => null);
     if (room == null) {
-      room = new WaitRoom(mapInfo, new Duration(minutes: 1), _onRoomCreate);
+      room = new WaitRoom(
+          mapInfo, new Duration(seconds: WAIT_IN_SECONDS), _onRoomCreate);
       rooms.add(room);
     }
 

@@ -1,4 +1,4 @@
-extends "res://Scripts/Packets/AckPacket.gd"
+extends "res://Scripts/Packets/AckRequest.gd"
 
 var packetIds = preload("res://Scripts/Packets/PacketIds.gd")
 

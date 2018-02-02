@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'client.dart';
+import 'logger.dart';
 import 'packets/core/ack_packet.dart';
 import 'utils/binary_data.dart';
 import 'packets/core/base_packet.dart';
@@ -57,7 +58,7 @@ class GameServer {
       return;
     }
 
-    print(binaryData.toHex());
+    log(binaryData.toHex());
 
     final packet = creator();
     packet.unpack(binaryData);
@@ -69,7 +70,7 @@ class GameServer {
       await packet.process(client);
     } catch (e) {
       // TODO: global common exceptions process
-      print(e);
+      log(e);
     }
   }
 
@@ -105,7 +106,7 @@ class GameServer {
         await RawDatagramSocket.bind(InternetAddress.ANY_IP_V4, DEFAULT_PORT);
 
     _socket.listen(_processPacket);
-    print("Server started PORT: ${DEFAULT_PORT}");
+    log("Server started PORT: ${DEFAULT_PORT}");
   }
 
   /// Send data to client
@@ -114,9 +115,8 @@ class GameServer {
       if (packet.sequence < 0) packet.sequence = _nextSequence();
     }
 
-    final binaryData = packet.pack();
-    // TODO: on debug
-    print(binaryData.toHex());
+    final binaryData = packet.pack();    
+    log(binaryData.toHex());
     final data = binaryData.toList();
     // TODO: resend ack
     _socket.send(data, client.address, DEFAULT_CLIENT_PORT);

@@ -1,8 +1,10 @@
 extends Node
 
+var logger = preload("res://Scripts/Logger.gd").new()
 var binaryDataClass = preload("res://Scripts/BinaryData.gd")
 var basePacketClass = preload("res://Scripts/Packets/BasePacket.gd")
 var ackPacketClass = preload("res://Scripts/Packets/AckPacket.gd")
+var ackRequestClass = preload("res://Scripts/Packets/AckRequest.gd")
 var ackResponseClass = preload("res://Scripts/Packets/AckResponse.gd")
 var pingRequestClass = preload("res://Scripts/Packets/PingRequest.gd")
 var pingResponseClass = preload("res://Scripts/Packets/PingResponse.gd")
@@ -141,7 +143,7 @@ func _getPacket(delta):
 		if _socketUDP.get_available_packet_count() > 0:
 			# TODO: Concat packets
 			var data = binaryDataClass.fromByteArray(_socketUDP.get_packet())
-			print(data.toHex())
+			logger.logMessage(data.toHex())
 			var packet = _unpackPacket(data)
 			if packet != null:
 				if packet is ackResponseClass:
@@ -255,8 +257,9 @@ func _sendAckPacket(packet):
 	packet.sequence = _nextSequence()
 	var data = packet.pack()
 	var arr = data.toArray()
-	print(data.toHex())
-	_ackPackets[packet.sequence] = arr
+	logger.logMessage(data.toHex())
+	if packet is ackRequestClass:
+		_ackPackets[packet.sequence] = arr
 	_socketUDP.put_packet(arr)
 
 func _sendBasePacket(packet):
@@ -266,7 +269,7 @@ func _sendBasePacket(packet):
 	@return void
 	"""
 	var data = packet.pack()
-	print(data.toHex())
+	logger.logMessage(data.toHex())
 	_socketUDP.put_packet(data.toArray())
 
 func connectServer():

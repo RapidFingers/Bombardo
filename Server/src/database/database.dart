@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:mongo_dart/mongo_dart.dart';
 
+import '../logger.dart';
 import '../utils/exceptions.dart';
 import 'db_player.dart';
 import 'db_map_info.dart';
@@ -49,9 +50,9 @@ class Database {
   Future start() async {
     _db = new Db(DATABASE_NAME);
     await _db.open();
-    print("Database connected");
+    log("Database connected");
     await _prepareData();
-    print("Database prepared");
+    log("Database prepared");
   }
 
   /// Create player

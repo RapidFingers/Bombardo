@@ -7,10 +7,11 @@ import 'packet_ids.dart';
 class PlayerPositionPush extends BaseRequest {
   /// Player id
   int playerId;
-  /// X position of player, UInt32, scaler 0.01
+  
+  /// X position of player, UInt32, scaler 0.1
   int posX;
 
-  /// Y position of player, UInt32, scaler 0.01
+  /// Y position of player, UInt32, scaler 0.1
   int posY;
 
   /// Instance

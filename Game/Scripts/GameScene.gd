@@ -2,12 +2,16 @@ extends "res://Scripts/BaseScene.gd"
 
 var playerPositionPushClass = preload("res://Scripts/Packets/PlayerPositionPush.gd")
 
+const SCALE = 100.0
+
+var player
+
 func _ready():
 	"""
 	On node ready
 	@return void
 	"""
-	pass
+	player = get_node("Spatial/Player")
 	
 func _onPacket(packet):
 	"""
@@ -16,7 +20,10 @@ func _onPacket(packet):
 	@return void
 	"""
 	if packet is playerPositionPushClass:
-		pass
+#		print(packet.posX)
+#		print(packet.posX / SCALE)
+		player.translation.x = packet.posX / SCALE
+		player.translation.y = packet.posY / SCALE
 	
 func _onError(packet):
 	"""

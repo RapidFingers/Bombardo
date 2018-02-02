@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import '../client.dart';
+import '../logger.dart';
 import 'core/ack_response.dart';
 import 'core/base_packet.dart';
 import 'packet_ids.dart';
@@ -16,6 +17,6 @@ class StartGameResponse extends AckResponse {
   /// Process request
   @override
   Future process(Client client) async {
-    print("START GAME");
+    log("START GAME");
   }
 }
