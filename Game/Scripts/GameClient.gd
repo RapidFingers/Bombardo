@@ -11,7 +11,7 @@ var pingResponseClass = preload("res://Scripts/Packets/PingResponse.gd")
 var packetIds = preload("res://Scripts/Packets/PacketIds.gd")
 
 # Server host
-const IP_SERVER = "127.0.0.1"
+const IP_SERVER = "192.168.1.36"
 # Server port
 const PORT_SERVER = 25101
 # Client port for incoming packets

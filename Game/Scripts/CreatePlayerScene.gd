@@ -21,6 +21,7 @@ func _onPacket(packet):
 	"""
 	if packet is createPlayerResponseClass:
 		settings.setValue(settings.PLAYER_ID, packet.playerId)
+		get_tree().change_scene("res://Scenes/ChooseRoomScene.tscn")
 	
 func _onError(packet):
 	"""

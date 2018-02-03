@@ -11,14 +11,11 @@ func _init().(packetIds.JOIN_ROOM_RESPONSE):
 	"""
 	pass
 	
-func unpack(data):
+func unpackSuccess(data):
 	"""
-	Unpack BinaryData to packet
+	Unpack BinaryData to packet if success
 	@param BinaryData data - binary data of packet
 	@return void
 	"""
-	.unpack(data)
-	if code != OK_RESPONSE:
-		return
 	
 	roomId = data.readUInt8()

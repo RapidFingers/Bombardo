@@ -63,7 +63,7 @@ proximity_fade_enable = false
 distance_fade_enable = false
 _sections_unfolded = [ "Albedo" ]
 
-[node name="GameScene" type="Node" index="0"]
+[node name="GameScene" type="Node"]
 
 script = ExtResource( 1 )
 

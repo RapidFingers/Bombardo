@@ -40,3 +40,23 @@ func unpack(data):
 	"""
 	.unpack(data)
 	code = data.readUInt8()
+	if code == OK_RESPONSE:
+		unpackSuccess(data)
+	else:
+		unpackError(data)
+	
+func unpackSuccess(data):
+	"""
+	Unpack BinaryData to packet if success
+	@param BinaryData data - binary data of packet
+	@return void
+	"""
+	pass
+
+func unpackError(data):
+	"""
+	Unpack BinaryData to packet if error
+	@param BinaryData data - binary data of packet
+	@return void
+	"""
+	pass

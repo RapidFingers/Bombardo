@@ -11,15 +11,12 @@ func _init().(packetIds.GET_ROOM_LIST_RESPONSE):
 	"""
 	pass
 	
-func unpack(data):
+func unpackSuccess(data):
 	"""
-	Unpack BinaryData to packet
+	Unpack BinaryData to packet if success
 	@param BinaryData data - binary data of packet
 	@return void
 	"""
-	.unpack(data)
-	if code != OK_RESPONSE:
-		return
 	
 	while not data.isEnd():
 		maps.append({
