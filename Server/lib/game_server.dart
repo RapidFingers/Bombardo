@@ -8,11 +8,12 @@ import 'dart:collection';
 
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:vector_math/vector_math.dart';
+import 'package:path/path.dart' as path;
 
-part 'src/utils/global.dart';
 part 'src/utils/logger.dart';
 part 'src/utils/binary_data.dart';
 part 'src/utils/exceptions.dart';
+part 'src/utils/settings.dart';
 
 part 'src/packets/core/base_packet.dart';
 part 'src/packets/core/base_request.dart';

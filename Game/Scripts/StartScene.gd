@@ -23,7 +23,7 @@ func _exit_tree():
 	"""
 	On exit tree
 	"""
-	gameClient.disconnect("onConnect", self, "_onConnected")
+	gameClient.disconnect("onConnected", self, "_onConnected")
 
 func _onPacket(packet):
 	"""
