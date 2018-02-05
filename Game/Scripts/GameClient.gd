@@ -72,6 +72,7 @@ func _registerPackets():
 	Fill packetCreators
 	@return void
 	"""
+	_packetCreators[packetIds.PING_REQUEST] = load("res://Scripts/Packets/PingRequest.gd")
 	_packetCreators[packetIds.PING_RESPONSE] = load("res://Scripts/Packets/PingResponse.gd")
 	_packetCreators[packetIds.CREATE_PLAYER_RESPONSE] = load("res://Scripts/Packets/CreatePlayerResponse.gd")
 	_packetCreators[packetIds.PLAYER_LOGIN_RESPONSE] = load("res://Scripts/Packets/LoginPlayerResponse.gd")
@@ -169,6 +170,13 @@ func _resend(delta):
 
 	_pause += delta
 
+func _sendPingResponse():
+	"""
+	Send ping response
+	@return void
+	"""
+	sendPacket(pingResponseClass.new())
+
 func _resendPing(delta):
 	"""
 	Resend ping
@@ -211,14 +219,18 @@ func _processWork(delta):
 	if packet == null:
 		return
 	
-	if packet is ackResponseClass:
-		if packet.code != ackResponseClass.OK_RESPONSE:
-			emit_signal("onError", packet)
-			return
+	if packet is pingRequestClass:
+		_sendPingResponse()
+		return
 	
 	if packet is pingResponseClass:
 		_processPing()
 		return
+	
+	if packet is ackResponseClass:
+		if packet.code != ackResponseClass.OK_RESPONSE:
+			emit_signal("onError", packet)
+			return
 	
 	emit_signal("onPacket", packet)
 	_resend(delta)

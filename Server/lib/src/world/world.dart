@@ -2,8 +2,11 @@ part of '../../game_server.dart';
 
 /// Phisics world with rooms and players
 class World {
-  /// Period of timer in milliseconds
-  static const double PERIOD = 1000 / 15;
+  /// Period of game timer in milliseconds
+  static const double GAME_PERIOD = 1000 / 15;
+
+  /// Period of ping timer in seconds
+  static const int PING_PERIOD = 5;  
 
   /// Wait for room in seconds
   static const int WAIT_IN_SECONDS = 5;
@@ -15,7 +18,10 @@ class World {
   int _roomId;
 
   /// Players. Key - player id
-  Map<int, Player> _players;
+  Map<int, Player> _playersById;
+
+  /// Players. Key - client
+  Map<Client, Player> _playersByClient;
 
   /// Wait rooms. Key - map info id
   Map<int, List<WaitRoom>> _waitRooms;
@@ -23,11 +29,42 @@ class World {
   /// Game rooms
   Map<int, GameRoom> _gameRooms;
 
-  /// Working timer
-  Timer _timer;
+  /// Work of ping timer
+  Future _pingTimerWork(Timer timer) async {
+    if (_playersById.values.isEmpty)
+      return;
+      
+    final players = _playersById.values.toList();
+    for (var player in players) {
+      player.decreaseTime(const Duration(seconds: PING_PERIOD));
+      if (player.isTimeout()) {
+        _playersByClient.remove(player.client);
+        _playersById.remove(player.id);
+        var waitRoom = player.waitRoom;
+        if (waitRoom != null) {
+          waitRoom.removePlayer(player);
+          if (waitRoom.isEmpty) {
+            var list = _waitRooms[waitRoom.mapInfo.id];
+            list.remove(waitRoom);
+          }
+        }
 
-  /// Work of timer
-  Future timerWork(Timer timer) async {
+        var gameRoom = player.gameRoom;
+        if (gameRoom != null) {
+          gameRoom.removePlayer(player);
+          if (gameRoom.isEmpty) {
+            _gameRooms.remove(gameRoom.id);
+          }
+        }
+      } else {
+        final packet = new PingRequest();
+        PacketServer.instance.sendPacket(player.client, packet);
+      }
+    }
+  }
+
+  /// Work of game timer
+  Future _gameTimerWork(Timer timer) async {
     _gameRooms.forEach((k, room) {
       room.forEach((player) {
         player.move();
@@ -50,7 +87,9 @@ class World {
   /// On room create
   Future _onRoomCreate(WaitRoom waitRoom) async {
     for (final player in waitRoom) {
-      player.direction = new Vector2(0.02, 0.0);
+      player
+        ..direction = new Vector2(0.0, 0.0)
+        ..position = new Vector2(100.0, 100.0);
 
       final room = _createNewRoom(waitRoom);
       room.addPlayer(player);
@@ -62,7 +101,8 @@ class World {
 
   /// Private constructor
   World._internal() {
-    _players = new Map<int, Player>();
+    _playersById = new Map<int, Player>();
+    _playersByClient = new Map<Client, Player>();
     _waitRooms = new Map<int, List<WaitRoom>>();
     _gameRooms = new Map<int, GameRoom>();
     _roomId = 1;
@@ -70,27 +110,36 @@ class World {
 
   /// Start world timer
   Future start() async {
-    _timer = new Timer.periodic(
-        new Duration(milliseconds: PERIOD.round()), timerWork);
+     new Timer.periodic(new Duration(milliseconds: GAME_PERIOD.round()), _gameTimerWork);
+     new Timer.periodic(new Duration(seconds: PING_PERIOD), _pingTimerWork);
+  }
+
+  /// Process ping from client
+  Future processPing(Client client) async {
+    final player = _playersByClient[client];
+    player.resetTimeout();
   }
 
   /// Create new player
   Future<Player> createPlayer(String name, Client client) async {
     final dbPlayer = await Database.instance.createPlayer(name);
     final player = new Player(dbPlayer.id, name, client);
-    _players[dbPlayer.id] = player;
+    _playersById[dbPlayer.id] = player;
+    _playersByClient[client] = player;
     return player;
   }
 
   /// Login player
   Future loginPlayerById(int playerId, Client client) async {
-    final dbPlayer = await Database.instance.getPlayerById(playerId);
-    _players[playerId] = new Player(dbPlayer.id, dbPlayer.name, client);
+    final dbPlayer = await Database.instance.getPlayerById(playerId);    
+    final player = new Player(dbPlayer.id, dbPlayer.name, client);
+    _playersById[playerId] = player;
+    _playersByClient[client] = player;
   }
 
   /// Get player by id
   Player getPlayerById(int playerId) {
-    final player = _players[playerId];
+    final player = _playersById[playerId];
     if (player == null) throw new PlayerNotExistsException();
     return player;
   }

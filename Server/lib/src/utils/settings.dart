@@ -19,8 +19,8 @@ class Settings {
   /// Load settings
   void _load() {
     // TODO assets
-    final file = new File("../${_assetsPath}/${_settingsFile}");
-    if (file.existsSync()) {      
+    final file = new File("${_assetsPath}/${_settingsFile}");
+    if (file.existsSync()) {
       final text = file.readAsStringSync();
       _data = JSON.decode(text);
     }
@@ -38,7 +38,11 @@ class Settings {
 
   /// Get value
   dynamic getValue(String key, dynamic onEmpty) {
-    var data = _data[key];
-    return data;
+    if (_data.containsKey(key)) {
+      var data = _data[key];
+      return data;
+    } else {
+      return onEmpty;
+    }
   }
 }

@@ -11,6 +11,6 @@ class StartGameResponse extends AckResponse {
   /// Process request
   @override
   Future process(Client client) async {
-    log("START GAME");
+    
   }
 }

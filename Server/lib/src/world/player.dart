@@ -3,7 +3,10 @@ part of '../../game_server.dart';
 /// Player
 class Player {
   /// Scale for position recalc
-  static const int POSITION_SCALE = 100;
+  static const int POSITION_SCALE = 10;
+
+  /// Timeout value to disconnect
+  static const int LIVE_TIMEOUT = 15;
 
   /// Player id
   final int id;
@@ -14,20 +17,40 @@ class Player {
   /// Client
   final Client client;
 
+  /// Timeout to disconnect
+  Duration timeout;
+
   /// Room where player waits for game
   WaitRoom waitRoom;
 
   /// Room where player playes
-  GameRoom currentRoom;
+  GameRoom gameRoom;
 
   /// Player position
   Vector2 position = new Vector2(0.0, 0.0);
 
   /// Direction of moving
-  Vector2 direction = new Vector2(0.0, 0.0);
+  Vector2 direction = new Vector2(0.0, 0.0);  
 
   /// Constructor
-  Player(this.id, this.name, this.client);
+  Player(this.id, this.name, this.client) {
+    resetTimeout();
+  }
+
+  /// Decrease time to disconnect
+  void decreaseTime(Duration time) {
+    timeout -= time;
+  }
+
+  /// Reset timeout duration
+  void resetTimeout() {
+    timeout = new Duration(seconds: LIVE_TIMEOUT);
+  }
+
+  /// Is timeout
+  bool isTimeout() {
+    return timeout.inSeconds <= 0;
+  }
 
   /// Get hash code
   @override

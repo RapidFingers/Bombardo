@@ -71,7 +71,6 @@ class PacketServer {
     try {
       await packet.process(client);
     } catch (e) {
-      // TODO: global common exceptions process
       log(e);
     }
   }
@@ -102,6 +101,7 @@ class PacketServer {
   PacketServer._internal() {
     _creators = new Map<int, Creator>();
     registerCreator(PacketIds.PING_REQUEST, PingRequest.create);
+    registerCreator(PacketIds.PING_RESPONSE, PingResponse.create);
     registerCreator(
         PacketIds.CREATE_PLAYER_REQUEST, CreatePlayerRequest.create);
     registerCreator(PacketIds.PLAYER_LOGIN_REQUEST, PlayerLoginRequest.create);
@@ -123,7 +123,11 @@ class PacketServer {
     _socket =
         await RawDatagramSocket.bind(InternetAddress.ANY_IP_V4, DEFAULT_PORT);
 
-    _socket.listen(_processPacket);
+    _socket.listen(_processPacket,      
+      onError: (e) { 
+        print(e); 
+      }
+    );
     log("Server started PORT: ${DEFAULT_PORT}");
   }
 
@@ -139,7 +143,7 @@ class PacketServer {
 
     final binaryData = packet.pack();
     log(binaryData.toHex());
-
+  
     if (isAckPacket) {
       if (binaryData.length > MAX_PACKET_SIZE) {
         _sendBigPacket(client, binaryData);

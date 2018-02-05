@@ -15,4 +15,14 @@ class Client {
   /// Constructor from [datagram] and [socket] for send data
   Client.fromDatagram(Datagram datagram, RawDatagramSocket socket) : 
     this(datagram.address, datagram.port);
+
+  /// Get hash code
+  @override
+  int get hashCode => address.hashCode ^ port;
+
+  /// Equals
+  @override
+  operator ==(Object e) {
+    return e.hashCode == hashCode;
+  }
 }
