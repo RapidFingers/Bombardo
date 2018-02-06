@@ -86,12 +86,17 @@ class World {
 
   /// On room create
   Future _onRoomCreate(WaitRoom waitRoom) async {
-    for (final player in waitRoom) {
+    final rand = new Random();    
+    for (final player in waitRoom) {      
+      final room = _createNewRoom(waitRoom);            
+      final x = (rand.nextInt(600) + 50).toDouble();
+      final y = (rand.nextInt(600) + 50).toDouble();
       player
         ..direction = new Vector2(0.0, 0.0)
-        ..position = new Vector2(100.0, 100.0);
+        ..position = new Vector2(x, y)
+        ..gameRoom = room
+        ..waitRoom = null;
 
-      final room = _createNewRoom(waitRoom);
       room.addPlayer(player);
       final packet = new StartGameRequest()..roomId = room.id;
       PacketServer.instance.sendPacket(player.client, packet);
@@ -166,5 +171,24 @@ class World {
     room.addPlayer(player);
     player.waitRoom = room;
     return room;
+  }
+  
+  /// Set player state
+  void setPlayerState(Client client, int state) {
+    final player = _playersByClient[client];
+    player.direction.x = 0.0;
+    player.direction.y = 0.0;
+    if ((state & InputStateRequest.UP_STATE) > 0) {
+      player.direction.y = -1.0;
+    }
+    if ((state & InputStateRequest.DOWN_STATE) > 0) {
+      player.direction.y = 1.0;
+    }
+    if ((state & InputStateRequest.LEFT_STATE) > 0) {
+      player.direction.x = -1.0;
+    }
+    if ((state & InputStateRequest.RIGHT_STATE) > 0) {
+      player.direction.x = 1.0;
+    }
   }
 }

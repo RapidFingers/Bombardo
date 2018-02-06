@@ -123,11 +123,7 @@ class PacketServer {
     _socket =
         await RawDatagramSocket.bind(InternetAddress.ANY_IP_V4, DEFAULT_PORT);
 
-    _socket.listen(_processPacket,      
-      onError: (e) { 
-        print(e); 
-      }
-    );
+    _socket.listen(_processPacket);
     log("Server started PORT: ${DEFAULT_PORT}");
   }
 

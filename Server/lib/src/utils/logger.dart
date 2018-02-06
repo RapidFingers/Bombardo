@@ -4,6 +4,6 @@ part of '../../game_server.dart';
 var _isDebug = Settings.instance.getValue("Debug", false) as bool;
 
 /// Log message
-void log(String message) {
+void log(dynamic message) {
   if (_isDebug) print(message);
 }

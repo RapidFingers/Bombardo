@@ -7,4 +7,10 @@ class PingResponse extends BaseResponse {
 
   /// Constructor
   PingResponse() : super(PacketIds.PING_RESPONSE);
+
+  /// Process create player packet
+  @override
+  Future process(Client client) async {
+    await World.instance.processPing(client);
+  }
 }

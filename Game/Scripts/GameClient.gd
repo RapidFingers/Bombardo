@@ -80,6 +80,7 @@ func _registerPackets():
 	_packetCreators[packetIds.JOIN_ROOM_RESPONSE] = load("res://Scripts/Packets/JoinRoomResponse.gd")
 	_packetCreators[packetIds.START_GAME_REQUEST] = load("res://Scripts/Packets/StartGameRequest.gd")
 	_packetCreators[packetIds.PLAYER_POSITION_PUSH] = load("res://Scripts/Packets/PlayerPositionPush.gd")
+	_packetCreators[packetIds.INPUT_STATE_RESPONSE] = load("res://Scripts/Packets/InputStateResponse.gd")
 
 func _startListen():
 	"""

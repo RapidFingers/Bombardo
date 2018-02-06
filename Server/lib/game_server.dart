@@ -5,10 +5,10 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:vector_math/vector_math.dart';
-import 'package:path/path.dart' as path;
 
 part 'src/utils/logger.dart';
 part 'src/utils/binary_data.dart';

@@ -23,7 +23,7 @@ class GetPlayerListRequest extends AckRequest {
   @override
   Future process(Client client) async {
     final player = World.instance.getPlayerById(playerId);
-    if (player.currentRoom == null) {
+    if (player.gameRoom == null) {
       PacketServer.instance.sendPacket(
           client, new CreatePlayerResponse().playerNotFound(sequence));
       return;

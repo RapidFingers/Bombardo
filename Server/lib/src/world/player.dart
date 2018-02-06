@@ -32,6 +32,9 @@ class Player {
   /// Direction of moving
   Vector2 direction = new Vector2(0.0, 0.0);  
 
+  /// Speed of player movement
+  double speed = 5.0;
+
   /// Constructor
   Player(this.id, this.name, this.client) {
     resetTimeout();
@@ -64,7 +67,7 @@ class Player {
 
   /// Move player to direction
   void move() {
-    position += direction;
+    position += direction * speed;
   }
 
   /// Return rescaled position

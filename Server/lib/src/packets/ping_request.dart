@@ -10,6 +10,7 @@ class PingRequest extends BaseRequest {
   /// Process create player packet
   @override
   Future process(Client client) async {
+    // TODO: check client
     await PacketServer.instance.sendPacket(client, new PingResponse());
   }
 }
