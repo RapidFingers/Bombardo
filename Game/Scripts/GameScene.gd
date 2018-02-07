@@ -5,8 +5,6 @@ var inputStateRequestClass = preload("res://Scripts/Packets/InputStateRequest.gd
 
 const SCALE = 10.0
 
-# Temp
-var player
 # State packet to send
 var statePacket
 
@@ -16,12 +14,32 @@ var state = 0
 # Player data by id
 var players = {}
 
+func _createNewPlayer(playerId, x, y):
+	"""
+	Create new player
+	@param Int playerId - player id
+	@param Double x - player start x position
+	@param Double y - player start y position
+	@return PlayerData
+	"""
+	var newNode = Sprite.new()
+	newNode.position.x = x
+	newNode.position.y = y
+	newNode.texture = load("res://icon.png")
+	add_child(newNode)
+	
+	var playerData = {
+		"player" : newNode
+	}
+	
+	players[playerId] = playerData
+	return playerData
+
 func _ready():
 	"""
 	On node ready
 	@return void
 	"""
-	player = get_node("Game/Player")
 	statePacket = inputStateRequestClass.new()
 	
 func _onPacket(packet):
@@ -31,8 +49,18 @@ func _onPacket(packet):
 	@return void
 	"""
 	if packet is playerPositionPushClass:
-		player.position.x = packet.posX / SCALE
-		player.position.y = packet.posY / SCALE
+		var x = packet.posX / SCALE
+		var y = packet.posY / SCALE
+		
+		var playerData = null
+		if (!players.has(packet.playerId)):
+			 playerData = _createNewPlayer(packet.playerId, x, y)
+		else:
+			playerData = players[packet.playerId]
+			
+		var player = playerData.player
+		player.position.x = x
+		player.position.y = y
 
 func _process(delta):
 	"""
