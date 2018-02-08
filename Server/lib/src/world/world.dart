@@ -9,7 +9,7 @@ class World {
   static const int PING_PERIOD = 5;  
 
   /// Wait for room in seconds
-  static const int WAIT_IN_SECONDS = 5;
+  static const int WAIT_IN_SECONDS = 10;
 
   /// Instance
   static final World instance = new World._internal();
@@ -89,8 +89,8 @@ class World {
     final rand = new Random();    
     for (final player in waitRoom) {      
       final room = _createNewRoom(waitRoom);            
-      final x = (rand.nextInt(600) + 50).toDouble();
-      final y = (rand.nextInt(600) + 50).toDouble();
+      final x = (rand.nextInt(300) + 50).toDouble();
+      final y = (rand.nextInt(300) + 50).toDouble();
       player
         ..direction = new Vector2(0.0, 0.0)
         ..position = new Vector2(x, y)
@@ -176,6 +176,9 @@ class World {
   /// Set player state
   void setPlayerState(Client client, int state) {
     final player = _playersByClient[client];
+    if (player == null)
+      return;
+
     player.direction.x = 0.0;
     player.direction.y = 0.0;
     if ((state & InputStateRequest.UP_STATE) > 0) {

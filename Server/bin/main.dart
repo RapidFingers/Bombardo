@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import '../lib/game_server.dart';
 
 /// Entry point

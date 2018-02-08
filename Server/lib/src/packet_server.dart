@@ -34,7 +34,10 @@ class PacketServer {
   static final PacketServer instance = new PacketServer._internal();
 
   /// Udp socket
-  RawDatagramSocket _socket;
+  RawDatagramSocket _serverSocket;
+
+  /// Udp socket
+  RawDatagramSocket _clientSocket;
 
   /// Packet creators
   Map<int, Creator> _creators;
@@ -44,10 +47,10 @@ class PacketServer {
 
   /// Process packet
   Future _processPacket(RawSocketEvent e) async {
-    final data = _socket.receive();
+    final data = _serverSocket.receive();
     if (data == null) return;
 
-    final client = new Client.fromDatagram(data, _socket);
+    final client = new Client.fromDatagram(data);
 
     final bytesList = new Uint8List.fromList(data.data);
     final binaryData = new BinaryData.fromUInt8List(bytesList);
@@ -88,12 +91,12 @@ class PacketServer {
 
   /// Send normal packet
   void _sendNormalPacket(Client client, BinaryData binaryData, { bool needAck : false }) {
-    final data = binaryData.toList();
-    if (!needAck) {       
-       _socket.send(data, client.address, DEFAULT_CLIENT_PORT);
+    final data = binaryData.toList();        
+    if (!needAck) {      
+      _clientSocket.send(data, client.address, DEFAULT_CLIENT_PORT);
     } else {      
       // TODO: wait ack
-       _socket.send(data, client.address, DEFAULT_CLIENT_PORT);
+      _clientSocket.send(data, client.address, DEFAULT_CLIENT_PORT);
     }
   }
 
@@ -120,12 +123,12 @@ class PacketServer {
 
   /// Start udp server
   Future start() async {
-    _socket =
+    _serverSocket =
         await RawDatagramSocket.bind(InternetAddress.ANY_IP_V4, DEFAULT_PORT);
 
-    _socket.listen(_processPacket, onError: (e) {
-      print(e);
-    });
+    _clientSocket = await RawDatagramSocket.bind(InternetAddress.ANY_IP_V4, 0);
+
+    _serverSocket.listen(_processPacket);
     log("Server started PORT: ${DEFAULT_PORT}");
   }
 

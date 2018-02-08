@@ -12,8 +12,8 @@ class Client {
   /// Constructor
   Client(this.address, this.port);
 
-  /// Constructor from [datagram] and [socket] for send data
-  Client.fromDatagram(Datagram datagram, RawDatagramSocket socket) : 
+  /// Constructor from [datagram]
+  Client.fromDatagram(Datagram datagram) : 
     this(datagram.address, datagram.port);
 
   /// Get hash code
