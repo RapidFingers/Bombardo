@@ -1,0 +1,23 @@
+{
+    "BasePacket": {
+        "params": {
+            "id": {
+                "type": "int"
+            }
+        }
+    },
+    "AckPacket": {
+        "parent": "BasePacket"
+    },
+    "LoginRequest": {
+        "parent": "AckPacket"
+    },
+    "CreatePlayerRequest": {
+        "parent": "AckPacket",
+        "params": {
+            "name": {
+                "type": "string"
+            }
+        }
+    }
+}
