@@ -65,15 +65,17 @@ class World {
 
   /// Work of game timer
   Future _gameTimerWork(Timer timer) async {
-    _gameRooms.forEach((k, room) {
-      room.forEach((player) {
+    for (final room in _gameRooms.values) {
+      for (final player in room) {
         player.move();
         final pos = player.getRescaledPos();
         final packet =
             PlayerPositionPush.recycle(player.id, pos.x.round(), pos.y.round());
-        PacketServer.instance.sendPacket(player.client, packet);
-      });
-    });
+        for (final toSend in room) {
+          await PacketServer.instance.sendPacket(toSend.client, packet);
+        }
+      }
+    }    
   }
 
   /// Create new game room
@@ -87,8 +89,8 @@ class World {
   /// On room create
   Future _onRoomCreate(WaitRoom waitRoom) async {
     final rand = new Random();    
-    for (final player in waitRoom) {      
-      final room = _createNewRoom(waitRoom);            
+    final room = _createNewRoom(waitRoom);
+    for (final player in waitRoom) {            
       final x = (rand.nextInt(300) + 50).toDouble();
       final y = (rand.nextInt(300) + 50).toDouble();
       player
