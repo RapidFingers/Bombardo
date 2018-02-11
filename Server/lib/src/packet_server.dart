@@ -91,7 +91,7 @@ class PacketServer {
 
   /// Send normal packet
   void _sendNormalPacket(Client client, BinaryData binaryData, { bool needAck : false }) {
-    final data = binaryData.toList();        
+    final data = binaryData.toData();
     if (!needAck) {      
       _clientSocket.send(data, client.address, DEFAULT_CLIENT_PORT);
     } else {      
