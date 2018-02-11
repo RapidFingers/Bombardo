@@ -26,7 +26,7 @@ func _createNewPlayer(playerId, x, y):
 	newNode.position.x = x
 	newNode.position.y = y
 	newNode.texture = load("res://icon.png")
-	add_child(newNode)
+	get_node("Game").add_child(newNode)
 	
 	var playerData = {
 		"player" : newNode
