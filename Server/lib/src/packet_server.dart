@@ -15,7 +15,6 @@ Stream Packet     : Bytes
 
 */
 
-
 /// Default port
 const int DEFAULT_PORT = 25101;
 
@@ -55,23 +54,24 @@ class PacketServer {
     final bytesList = new Uint8List.fromList(data.data);
     final binaryData = new BinaryData.fromUInt8List(bytesList);
     final protocolId = binaryData.readUInt8();
-    if (protocolId != BasePacket.PROTOCOL_ID) return;
-
-    final packetId = binaryData.readUInt8();
-    final creator = _creators[packetId];
-    if (creator == null) {
-      return;
-    }
-
-    log(binaryData.toHex());
-
-    final packet = creator();
-    packet.unpack(binaryData);
-    if (packet is AckPacket) {
-      if (packet.sequence > _sequence) _sequence = packet.sequence;
-    }
 
     try {
+      if (protocolId != BasePacket.PROTOCOL_ID) return;
+
+      final packetId = binaryData.readUInt8();
+      final creator = _creators[packetId];
+      if (creator == null) {
+        return;
+      }
+
+      log(binaryData.toHex());
+
+      final packet = creator();
+      packet.unpack(binaryData);
+      if (packet is AckPacket) {
+        if (packet.sequence > _sequence) _sequence = packet.sequence;
+      }
+
       await packet.process(client);
     } catch (e) {
       log(e);
@@ -85,16 +85,15 @@ class PacketServer {
   }
 
   /// Send big data
-  void _sendBigPacket(Client client, BinaryData data) {
-
-  }
+  void _sendBigPacket(Client client, BinaryData data) {}
 
   /// Send normal packet
-  void _sendNormalPacket(Client client, BinaryData binaryData, { bool needAck : false }) {
+  void _sendNormalPacket(Client client, BinaryData binaryData,
+      {bool needAck: false}) {
     final data = binaryData.toData();
-    if (!needAck) {      
+    if (!needAck) {
       _clientSocket.send(data, client.address, DEFAULT_CLIENT_PORT);
-    } else {      
+    } else {
       // TODO: wait ack
       _clientSocket.send(data, client.address, DEFAULT_CLIENT_PORT);
     }
@@ -144,15 +143,15 @@ class PacketServer {
 
     final binaryData = packet.pack();
     log(binaryData.toHex());
-  
+
     if (isAckPacket) {
       if (binaryData.length > MAX_PACKET_SIZE) {
         _sendBigPacket(client, binaryData);
       } else {
         _sendNormalPacket(client, binaryData, needAck: needAck);
-      } 
+      }
     } else {
       _sendNormalPacket(client, binaryData);
-    }    
+    }
   }
 }

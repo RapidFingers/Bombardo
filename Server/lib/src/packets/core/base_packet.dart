@@ -13,7 +13,7 @@ abstract class BasePacket {
   final BinaryData _data;
 
   /// Constructor
-  BasePacket(this.packetId) : _data = new BinaryData();
+  BasePacket(this.packetId) : _data = new BinaryDataPooled();
 
   /// Process for override
   /// Virtual

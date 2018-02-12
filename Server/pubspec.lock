@@ -7,7 +7,16 @@ packages:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.3"
+    version: "2.0.4"
+  binary_data:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "87e893fc53c738b6d92c683ab527a8813b0de604"
+      url: "https://github.com/RapidFingers/BinaryData"
+    source: git
+    version: "0.0.2"
   bson:
     dependency: transitive
     description:
@@ -49,7 +58,7 @@ packages:
       name: fixnum
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.10.6"
+    version: "0.10.7"
   logging:
     dependency: transitive
     description:
@@ -121,4 +130,4 @@ packages:
     source: hosted
     version: "2.0.5"
 sdks:
-  dart: ">=2.0.0-dev.15.0 <=2.0.0-dev.23.0"
+  dart: "2.0.0-dev.23.0"

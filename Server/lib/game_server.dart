@@ -9,9 +9,9 @@ import 'dart:math';
 
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:vector_math/vector_math.dart';
+import 'package:binary_data/binary_data_lib.dart';
 
 part 'src/utils/logger.dart';
-part 'src/utils/binary_data.dart';
 part 'src/utils/exceptions.dart';
 part 'src/utils/settings.dart';
 
