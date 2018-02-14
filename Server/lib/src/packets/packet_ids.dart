@@ -1,4 +1,4 @@
-part of '../../game_server.dart';
+part of game_server;
 
 /// Ids of packets
 class PacketIds {
